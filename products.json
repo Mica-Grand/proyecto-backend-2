@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "title": "Serum Niacinamida",
+    "description": "Descripción del nuevo producto",
+    "price": 25000,
+    "thumbnails": [
+      "https://i5.walmartimages.com.mx/mg/gm/3pp/asr/b794b67c-beb4-4977-aa9b-42d92cb12476.9fa67cb5f1dbbdb2de42b997a77b85f3.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF",
+      "https://i5.walmartimages.com.mx/mg/gm/3pp/asr/28fa72a3-8664-4bb3-9575-1bb021356c59.a772bb643f849b73ff9b66c4135ec4f9.jpeg?odnHeight=612&odnWidth=612&odnBg=FFFFFF"
+    ],
+    "code": "NP123",
+    "stock": 50,
+    "status": true
+  },
+  {
+    "id": 2,
+    "title": "Serum Vitamin C",
+    "description": "The best serum antiaging",
+    "price": 27000,
+    "thumbnails": [
+      "https://farmaciazentner.com.ar/wp-content/uploads/2020/04/3337875660570-510x510.jpg",
+      "https://farmaciazentner.com.ar/wp-content/uploads/2020/04/3337875660570-2-510x510.webp"
+    ],
+    "code": "VC123",
+    "stock": 40,
+    "status": true
+  }
+]
