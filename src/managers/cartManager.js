@@ -1,18 +1,34 @@
 import { promises as fs } from 'fs';
+import __dirname from '../utils.js'
+
 
 class CartManager {
-    constructor(filePath) {
-        this.filePath = filePath;
+    constructor() {
+        this.filePath = `${__dirname}/../src/data/carts.json`;
         this.carts = [];
         this.lastId = 0;
         this.initialize();
     }
 
+    async loadCartsFromFile() {
+        try {
+            const data = await fs.readFile(this.filePath, 'utf8');
+            this.carts = JSON.parse(data);
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                this.carts = [];
+                await this.saveCartsToFile();
+                console.log('The file carts.json has been created.');
+                return;
+            }
+            console.error('Error loading carts from file:', error);
+        }
+    }
     async initialize() {
         try {
             await this.loadCartsFromFile();
             if (this.carts.length > 0) {
-               CartManager.lastId = Math.max(...this.carts.map(cart => cart.id));
+               this.lastId = Math.max(...this.carts.map(cart => cart.id));
             }
         } catch (error) {
             console.error('Error initializing CartManager:', error);
@@ -28,23 +44,9 @@ class CartManager {
         }
     }
 
-    async loadCartsFromFile() {
-        try {
-            const data = await fs.readFile(this.filePath, 'utf8');
-            this.carts = JSON.parse(data);
-        } catch (error) {
-            if (error.code === 'ENOENT') {
-                await this.saveCartsToFile();
-                console.log('The file carts.json has been created.');
-                return;
-            }
-            console.error('Error loading carts from file:', error);
-        }
-    }
-
     async createCart() {
         const newCart = {
-            id: ++CartManager.lastId,
+            id: ++this.lastId,
             products: []
         };
 

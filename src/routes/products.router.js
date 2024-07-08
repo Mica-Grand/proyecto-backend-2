@@ -23,20 +23,25 @@ router.get('/', async (req, res) => {
 
 router.get('/:pid', async (req, res) => {
     try {
-        const productId = parseInt(req.params.pid);
-        const product = await productManager.getProductById(productId);
-
-        if (!product) {
-            res.status(404).json({ error: `The product with id ${productId} does not exist` });
-            return;
-        }
-
-        res.json(product);
+      const productId = parseInt(req.params.pid);
+      if (isNaN(productId)) {
+        res.status(400).json({ error: 'Invalid product ID' });
+        return;
+      }
+  
+      const product = await productManager.getProductById(productId);
+  
+      if (!product) {
+        res.status(404).json({ error: `The product with id ${productId} does not exist` });
+        return;
+      }
+  
+      res.json(product);
     } catch (error) {
-        console.error('Error while retrieving product:', error);
-        res.status(500).json({ error: 'Server Internal Error' });
+      console.error('Error while retrieving product:', error);
+      res.status(500).json({ error: 'Server Internal Error' });
     }
-});
+  });
 
 router.post('/', async (req, res) => {
     try {

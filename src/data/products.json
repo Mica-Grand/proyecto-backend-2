@@ -1,0 +1,100 @@
+[
+  {
+    "id": 1,
+    "title": "Nuevo Producto",
+    "description": "Descripción del nuevo producto",
+    "price": 99.99,
+    "thumbnails": [
+      "url_thumbnail1.jpg",
+      "url_thumbnail2.jpg"
+    ],
+    "code": "NP123",
+    "category": "Categoría del producto",
+    "stock": 50,
+    "status": true
+  },
+  {
+    "id": 3,
+    "title": "Crema Hidratante",
+    "description": "Crema hidratante para piel seca con aloe vera y vitamina E.",
+    "price": 29.99,
+    "thumbnails": [
+      "https://example.com/images/crema-hidratante-1.jpg",
+      "https://example.com/images/crema-hidratante-2.jpg"
+    ],
+    "code": "CHD001",
+    "category": "Skin Care",
+    "stock": 150,
+    "status": true
+  },
+  {
+    "id": 4,
+    "title": "Serum Anti-Edad",
+    "description": "Serum anti-edad con retinol y ácido hialurónico para reducir arrugas.",
+    "price": 49.99,
+    "thumbnails": [
+      "https://example.com/images/serum-anti-edad-1.jpg",
+      "https://example.com/images/serum-anti-edad-2.jpg"
+    ],
+    "code": "SAE002",
+    "category": "Skin Care",
+    "stock": 100,
+    "status": true
+  },
+  {
+    "id": 5,
+    "title": "Limpiador Facial",
+    "description": "Limpiador facial suave para todo tipo de piel con extracto de té verde.",
+    "price": 19.99,
+    "thumbnails": [
+      "https://example.com/images/limpiador-facial-1.jpg",
+      "https://example.com/images/limpiador-facial-2.jpg"
+    ],
+    "code": "LF003",
+    "category": "Skin Care",
+    "stock": 200,
+    "status": true
+  },
+  {
+    "id": 6,
+    "title": "Tónico Facial",
+    "description": "Tónico facial refrescante con agua de rosas y hamamelis.",
+    "price": 24.99,
+    "thumbnails": [
+      "https://example.com/images/tonico-facial-1.jpg",
+      "https://example.com/images/tonico-facial-2.jpg"
+    ],
+    "code": "TF004",
+    "category": "Skin Care",
+    "stock": 120,
+    "status": true
+  },
+  {
+    "id": 7,
+    "title": "Base de Maquillaje",
+    "description": "Base de maquillaje líquida con cobertura completa y acabado mate.",
+    "price": 34.99,
+    "thumbnails": [
+      "https://example.com/images/base-maquillaje-1.jpg",
+      "https://example.com/images/base-maquillaje-2.jpg"
+    ],
+    "code": "BM001",
+    "category": "Maquillaje",
+    "stock": 120,
+    "status": true
+  },
+  {
+    "id": 8,
+    "title": "nuevo título",
+    "description": "Labial mate de larga duración en tonos vibrantes.",
+    "price": 19.99,
+    "thumbnails": [
+      "https://example.com/images/labial-mate-1.jpg",
+      "https://example.com/images/labial-mate-2.jpg"
+    ],
+    "code": "LM002",
+    "category": "Maquillaje",
+    "stock": 1,
+    "status": true
+  }
+]

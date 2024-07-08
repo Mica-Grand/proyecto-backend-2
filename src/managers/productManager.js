@@ -1,8 +1,10 @@
 import { promises as fs } from 'fs';
+import __dirname from '../utils.js'
+
 
 class ProductManager {
     constructor(filePath) {
-        this.filePath = filePath;
+        this.filePath = `${__dirname}/../src/data/products.json`;
         this.products = [];
         this.lastId = 0;
         this.loadProductsFromFile();
@@ -19,6 +21,7 @@ class ProductManager {
             if (error.code === 'ENOENT') {
                 await fs.writeFile(this.filePath, '[]');
                 this.products = [];
+                console.log('The file products.json has been created.');
             } else {
                 throw error;
             }
@@ -46,6 +49,7 @@ class ProductManager {
             price,
             thumbnails,
             code,
+            category,
             stock,
             status: true
 
@@ -76,6 +80,7 @@ class ProductManager {
 
         this.products[productIndex] = { ...this.products[productIndex], ...updatedFields };
         await this.saveProductsToFile();
+        return { ...this.products[productIndex] };
     }
 
     async deleteProduct(id) {
