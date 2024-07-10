@@ -1,12 +1,12 @@
 import { promises as fs } from 'fs';
 import __dirname from '../utils.js'
 
-
 class CartManager {
-    constructor() {
+    constructor(productManager) {
         this.filePath = `${__dirname}/../src/data/carts.json`;
         this.carts = [];
         this.lastId = 0;
+        this.productManager = productManager; 
         this.initialize();
     }
 
@@ -67,22 +67,28 @@ class CartManager {
         const cart = this.carts.find(cart => cart.id === cartId);
 
         if (!cart) {
-            console.error(`Cart with ID ${cartId} not found.`);
-            return false;
+            throw new Error(`Cart with ID ${cartId} not found.`);
         }
-
+        await this.productManager.loadProductsFromFile(); 
+        const product = this.productManager.products.find(product => product.id === productId);
+    
+        if (!product) {
+          throw new Error(`Product with ID ${productId} doesn´t exist.`);
+        }
+    
+      
         const productToAdd = { productId, quantity };
         const existingProductIndex = cart.products.findIndex(item => item.productId === productId);
-
+      
         if (existingProductIndex !== -1) {
-            cart.products[existingProductIndex].quantity += quantity;
+          cart.products[existingProductIndex].quantity += quantity;
         } else {
-            cart.products.push(productToAdd);
+          cart.products.push(productToAdd);
         }
-
+      
         await this.saveCartsToFile();
         return true;
+      }
     }
-}
 
 export default CartManager;

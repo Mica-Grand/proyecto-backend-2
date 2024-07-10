@@ -3,7 +3,7 @@ import __dirname from '../utils.js'
 
 
 class ProductManager {
-    constructor(filePath) {
+    constructor() {
         this.filePath = `${__dirname}/../src/data/products.json`;
         this.products = [];
         this.lastId = 0;

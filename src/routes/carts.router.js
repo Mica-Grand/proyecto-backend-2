@@ -1,12 +1,10 @@
 import {Router} from 'express';
-import CartManager from '../managers/cartManager.js';
+import { cartManager } from '../managers/managers.js';
 
 const router = Router();
 
-const cartManager = new CartManager('./carts.json');
 
-
-router.post('/', async (req, res) => {
+router.post('/', async (_req, res) => {
     try {
         const newCart = await cartManager.createCart();
         res.status(201).json(newCart);
@@ -21,10 +19,10 @@ router.get('/:cid', async (req, res) => {
         const cartId = parseInt(req.params.cid);
         const cart = await cartManager.getCartById(cartId);
         if (!cart) {
-            res.status(404).json({ error: `The cart with id ${cartId} does not exist` });
-            return;
+        return res.status(404).json({ error: `The cart with id ${cartId} does not exist` });
         }
-        res.json(cart);
+        const cartProducts = cart.products;
+        res.json(cartProducts);
     } catch (error) {
         console.error('Error while retrieving the cart:', error);
         res.status(500).json({ error: 'Server internal error' });
@@ -41,11 +39,17 @@ router.post('/:cid/product/:pid', async (req, res) => {
         if (added) {
             res.json({ message: `The product with ID ${productId} has been succesfully added to the cart` });
         } else {
-            res.status(404).json({ error: `The cart with id ${cartId} does not exist` });
+            return res.status(404).json({ error: `The cart with id ${cartId} does not exist` });
         }
     } catch (error) {
         console.error('Error while adding  a product to the cart:', error);
-        res.status(500).json({ error: 'Server Internal error' });
+        if (error.message.includes('Product with ID')) {
+            return res.status(404).json({ error: error.message });
+        } else if (error.message.includes('Cart with ID')) {
+            return res.status(404).json({ error: error.message });
+        } else {
+            res.status(500).json({ error: 'Server Internal error' });
+        }
     }
 });
 

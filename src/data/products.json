@@ -42,20 +42,6 @@
     "status": true
   },
   {
-    "id": 5,
-    "title": "Limpiador Facial",
-    "description": "Limpiador facial suave para todo tipo de piel con extracto de té verde.",
-    "price": 19.99,
-    "thumbnails": [
-      "https://example.com/images/limpiador-facial-1.jpg",
-      "https://example.com/images/limpiador-facial-2.jpg"
-    ],
-    "code": "LF003",
-    "category": "Skin Care",
-    "stock": 200,
-    "status": true
-  },
-  {
     "id": 6,
     "title": "Tónico Facial",
     "description": "Tónico facial refrescante con agua de rosas y hamamelis.",
@@ -95,6 +81,20 @@
     "code": "LM002",
     "category": "Maquillaje",
     "stock": 1,
+    "status": true
+  },
+  {
+    "id": 9,
+    "title": "Producto nuevo 2",
+    "description": "Está descripción ha sido actualizada",
+    "price": 5559,
+    "thumbnails": [
+      "url_thumbnail1.jpg",
+      "url_thumbnail2.jpg"
+    ],
+    "code": "ASFG3",
+    "category": "Nueva category",
+    "stock": 5,
     "status": true
   }
 ]
