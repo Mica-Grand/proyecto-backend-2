@@ -96,5 +96,19 @@
     "category": "Nueva category",
     "stock": 5,
     "status": true
+  },
+  {
+    "id": 10,
+    "title": "Cepillo",
+    "description": "Cepillo cerdas naturales",
+    "price": 10000,
+    "thumbnails": [
+      "url_thumbnail1.jpg",
+      "url_thumbnail2.jpg"
+    ],
+    "code": "GHFS1",
+    "category": "Hair",
+    "stock": 1,
+    "status": true
   }
 ]

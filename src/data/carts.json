@@ -36,5 +36,18 @@
   {
     "id": 4,
     "products": []
+  },
+  {
+    "id": 5,
+    "products": []
+  },
+  {
+    "id": 6,
+    "products": [
+      {
+        "productId": 3,
+        "quantity": 1
+      }
+    ]
   }
 ]

@@ -118,7 +118,7 @@ npm start
 ME FALTA AGREGAR LAS SCREENSHOTS
 ### Obtener todos los productos
 
-![Obtener todos los productos](screenshots/get_products.png)
+![Obtener todos los productos](img/GET-api-products.png)
 
 ### Obtener un producto por su ID
 

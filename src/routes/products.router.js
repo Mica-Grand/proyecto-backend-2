@@ -33,7 +33,7 @@ router.get("/:pid", async (req, res) => {
 
     let product;
     try {
-      product == (await productManager.getProductById(productId));
+      product = (await productManager.getProductById(productId));
     } catch (error) {
       res.status(404).json({ error: error.message });
       return;
