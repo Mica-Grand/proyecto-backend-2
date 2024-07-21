@@ -16,8 +16,7 @@ router.get('/', async (req, res) => {
             return res.status(400).json({ error: 'Invalid limit parameter' });
         }}
         console.log('Products:', products);
-        res.json(products);
-    } catch (error) {
+        res.json(products);    } catch (error) {
         console.error('Error while retrieving the list of products: ', error);
         res.status(500).json({ error: 'Error while retrieving products' });
     }

@@ -1,9 +1,9 @@
 import { promises as fs } from 'fs';
-import __dirname from '../utils.js'
+import __dirname from '../utils/utils.js'
 
 class CartManager {
     constructor(productManager) {
-        this.filePath = `${__dirname}/../src/data/carts.json`;
+        this.filePath = `${__dirname}/data/carts.json`;
         this.carts = [];
         this.lastId = 0;
         this.productManager = productManager; 

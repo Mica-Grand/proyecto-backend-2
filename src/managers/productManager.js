@@ -1,10 +1,10 @@
 import { promises as fs } from 'fs';
-import __dirname from '../utils.js'
+import __dirname from '../utils/utils.js'
 
 
 class ProductManager {
     constructor() {
-        this.filePath = `${__dirname}/../src/data/products.json`;
+        this.filePath = `${__dirname}/data/products.json`;
         this.products = [];
         this.lastId = 0;
         this.loadProductsFromFile();
@@ -86,11 +86,13 @@ class ProductManager {
     async deleteProduct(id) {
         const productIndex = this.products.findIndex(product => product.id === id);
         if (productIndex === -1) {
-            throw new Error(`Product not found. Invalid id: ${id}`);
+            console.error(`Product not found. Invalid id: ${id}`);
+            return false;
         }
 
         this.products.splice(productIndex, 1);
         await this.saveProductsToFile();
+        return true; 
     }
 }
 
