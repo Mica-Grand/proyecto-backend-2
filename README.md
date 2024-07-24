@@ -127,35 +127,35 @@ npm start
 ## Ejemplos de uso con Postman
 ### Obtener todos los productos
 
-![Obtener todos los productos](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/public/img/GET-api-products.png?raw=true)
+![Obtener todos los productos](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/GET-api-products.png)
 
 ### Obtener un producto por su ID
 
-![Obtener un producto por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/public/img/GET-api-products-pid.JPG?raw=true)
+![Obtener un producto por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/GET-api-products-pid.JPG)
 
 ### Crear un nuevo producto
 
-![Crear un nuevo producto](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/public/img/POST-api-products.JPG?raw=true)
+![Crear un nuevo producto](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/POST-api-products.JPG)
 
 ### Actualizar un producto por su ID
 
-![Actualizar un producto por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/public/img/PUT-api-products-pid.JPG?raw=true)
+![Actualizar un producto por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/PUT-api-products-pid.JPG)
 
 ### Eliminar un producto por su ID
 
-![Eliminar un producto por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/public/img/DELETE-api-products-pid.JPG?raw=true)
+![Eliminar un producto por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/DELETE-api-products-pid.JPG)
 
 ### Crear un nuevo carrito
 
-![Crear un nuevo carrito](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/public/img/POST-api-carts.JPG?raw=true)
+![Crear un nuevo carrito](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/POST-api-carts.JPG)
 
 ### Agregar un producto al carrito por id
 
-![Agregar un producto al carrito](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/public/img/POST-api-carts-cid-product-pid.JPG?raw=true)
+![Agregar un producto al carrito](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/POST-api-carts-cid-product-pid.JPG)
 
 ### Obtener un carrito por su ID
 
-![Obtener un carrito por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/public/img/GET-api-carts-cid.JPG?raw=true)
+![Obtener un carrito por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/GET-api-carts-cid.JPG)
 
 
 
