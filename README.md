@@ -1,6 +1,6 @@
 # Proyecto Backend Coderhouse
 
-Esta app es el proyecto del curso de Backend de Coderhouse. En esta ocasión se encuentra actualizada con los requerimientos de la Preentrega N° 1.
+Esta app es el proyecto del curso de Backend de Coderhouse. En esta ocasión se encuentra actualizada con los requerimientos de la Preentrega N° 2.
 
 ## Información del Proyecto
 
@@ -12,17 +12,25 @@ Esta app es el proyecto del curso de Backend de Coderhouse. En esta ocasión se 
    
 - ### Descripción:
 
-  Es una aplicación desarrollada en Node.js utilizando el framework Express, diseñada para gestionar productos y carritos mediante el uso de persistencia en sistema de archivos (lueen una futura versión se implementará MongoDb). Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre productos almacenados en un archivo JSON y también gestionar carritos de compra.
+  Es una aplicación desarrollada en Node.js utilizando el framework Express, diseñada para gestionar productos y carritos mediante el uso de persistencia en sistema de archivos (en una futura versión se implementará MongoDb). Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre productos almacenados en un archivo JSON y también gestionar carritos de compra.
+  En esta entrega se han implementado Handlebars y Socket.IO para mejorar la interacción en tiempo real.
 
 - ### Características:
+  - Eliminar y agregar carritos y ver la vista en tiempo real.
   - Crear, listar, actualizar y eliminar productos.
   - Crear carritos de compra.
   - Agregar productos a los carritos existentes.
   - Visualizar el contenido de los carritos.
+  - Vistas:
+    Home ("/"): Página principal, que carga todos los productos guardados con fs en products.json.
+    Realtime Products ("/realtimeproducts"): Permite, a través d eun formulario y botones, agregar y eliminar productos y ver los cambios en la vista en tiempo real usando Socket.IO. Además se utiliza Sweet Alert para mostrar mensajes de bienvenida y de confirmación al eliminar y agregar productos
 
 - ### Tecnologías utilizadas:
   - Node.js
   - Express.js
+  - Handlebars.
+  - Socket.IO.
+  - Sweet Alert.
 
 
 ## Instalación
@@ -38,6 +46,8 @@ Para ejecutar la aplicación:
 npm start
 
 ```
+
+
 ## Endpoints API 
 
 ### PRODUCTS

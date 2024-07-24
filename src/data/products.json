@@ -31,5 +31,16 @@
     "category": "skin-care",
     "stock": "10",
     "status": true
+  },
+  {
+    "id": 9,
+    "title": "Powder blush",
+    "description": "Major Headlines Double-Take Crème & Powder Blush Duo",
+    "price": "5000",
+    "thumbnails": "https://www.sephora.com/productimages/sku/s2742567-main-zoom.jpg?imwidth=166",
+    "code": "vsbsavndnd",
+    "category": "makeup",
+    "stock": "2",
+    "status": true
   }
 ]
