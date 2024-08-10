@@ -8,7 +8,7 @@
             <img src={{{thumbnails}}}>
             <p>{{description}}</p>
             <p>${{price}}</p>
-            <button class="delete-product" data-id="{{id}}">Eliminar</button>
+            <button class="delete-product" data-id="{{_id}}">Eliminar</button>
         </li>
         {{/each}}
 
@@ -43,5 +43,4 @@
     </form>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src ="/socket.io/socket.io.js"></script>
 <script src="/js/index.js"></script>

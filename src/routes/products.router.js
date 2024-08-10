@@ -1,66 +1,55 @@
 import {Router} from 'express';
-import { productManager } from '../managers/managers.js';
+import productModel from '../models/product.model.js';
 
 const router = Router();
 
+
 router.get('/', async (req, res) => {
-    let products;
-    try {
-        const limit = req.query.limit;
-        products = await productManager.getProducts();
-        if (limit) {
-            const parsedLimit = parseInt(limit);
-            if(!isNaN(parsedLimit) && parsedLimit >= 1){
-                products = products.slice(0, parsedLimit);
-            } else {
-            return res.status(400).json({ error: 'Invalid limit parameter' });
-        }}
-        console.log('Products:', products);
-        res.json(products);    } catch (error) {
-        console.error('Error while retrieving the list of products: ', error);
-        res.status(500).json({ error: 'Error while retrieving products' });
-    }
-});
+  let { limit, page, sort, query } = req.query;
+  if (!page) page = 1;
+  if (!limit) limit = 10;
 
-router.get("/:pid", async (req, res) => {
-  try {
-    const productId = parseInt(req.params.pid);
-    if (isNaN(productId)) {
-      res.status(400).json({ error: "Invalid product ID. Enter a number" });
-      return;
-    }
-
-    let product;
-    try {
-      product = (await productManager.getProductById(productId));
-    } catch (error) {
-      res.status(404).json({ error: error.message });
-      return;
-    }
-    res.json(product);
-  } catch (error) {
-    console.error("Error while retrieving product:", error);
-    res.status(500).json({ error: "Error retrieving the product" });
+  let filter = {};
+  if (query) {
+    filter = { $or: [{ category: query }, { status: query }] };
   }
-});
+
+  const options = {
+    limit: parseInt(limit),
+    page: parseInt(page),
+    sort: sort ? { price: sort === "asc" ? 1 : -1 } : {},
+    lean:true
+  };
+  try {
+    const result = await productModel.paginate(filter, options);
+    result.prevLink = result.hasPrevPage ? `http://localhost:8080/products?page=${result.prevPage}` : '';
+    result.nextLink = result.hasNextPage ? `http://localhost:8080/products?page=${result.nextPage}` : '';
+    result.isValid = !(page <= 0 || page > result.totalPages)
+    res.send({ result: "success", payload: result });
+  } catch (error) {
+    console.error("Error while retrieving the list of products: ", error);
+    res.status(500).json({ error: "Error while retrieving products" });
+  }
+})
 
 router.post('/', async (req, res) => {
-    try {
-        const { title, description, code, price, stock, category, thumbnails } = req.body;
-        //Falta agregar validación de tipos de datos
-        const newProduct = await productManager.addProduct(title, description, code, price, stock, category, thumbnails);
-        res.status(201).json(newProduct);
-    } catch (error) {
-        console.error('Error  while creating a new product:', error);
-        res.status(500).json({ error: 'All fields are mandatory' });
+  try {
+      let { title, description, code, price, stock, category, thumbnails } = req.body;
+      if (!title || !description || !code || !price || !stock || !category) {
+        res.send({status:"error", error:"All fields are mandatory, except thumbnails."});
     }
-});
+      let result = await productModel.create({title, description, code, price, stock, category, thumbnails});
+      res.send({result: "success", payload: result});
+  } catch (error) {
+      console.error('Error  while creating a new product:', error);
+      res.status(500).json({ error: 'Error while creating product' });
+  }
+})
 
 router.put("/:pid", async (req, res) => {
-  let updatedProduct;
   try {
-    const productId = parseInt(req.params.pid);
-    const allowedFields = [
+    let productId = req.params.pid;
+    let allowedFields = [
       "title",
       "description",
       "code",
@@ -69,7 +58,6 @@ router.put("/:pid", async (req, res) => {
       "category",
       "thumbnails",
     ];
-            //Falta agregar validación para q   ue no permita cambiar de tipos de datos
 
     const updatedFields = {};
 
@@ -83,34 +71,46 @@ router.put("/:pid", async (req, res) => {
       }
     }
 
-    updatedProduct = await productManager.updateProduct(
-      productId,
-      updatedFields
-    );
-    console.log(updatedProduct);
-
-    res
-      .status(200)
-      .json({
-        message: `You successfully updated the product with id ${productId}. The updated data is ${JSON.stringify(
-          updatedFields
-        )}`,
-      });
+    let result = await productModel.updateOne({_id:productId}, updatedFields)
+    res.send({result: "success", payload: result});
+   
   } catch (error) {
     console.error("Error while updating the product:", error);
-    res.status(500).json({ error: "Error updating the product" });
+    res.status(500).json({ error: 'Error while updating product' });
   }
 });
 
+
 router.delete('/:pid', async (req, res) => {
-    try {
-        const productId = parseInt(req.params.pid);
-        await productManager.deleteProduct(productId);
-        res.json({ message: `The product with ID ${productId} has been succesfully deleted` });
+  try {
+      const productId = req.params.pid;
+      let result = await productModel.deleteOne({_id:productId});
+      res.send({result: "success", payload: result});
+  } catch (error) {
+      console.error('Error while deleting the product', error);
+      res.status(500).json({ error: 'Error while deleting product' });
+  }
+});
+
+router.get("/:pid", async (req, res) => {
+  try {
+    const productId = req.params.pid;
+    if (!productId) {
+      res.status(400).json({ error: "Invalid product ID. Enter a valid ID" });
+      return;
+    }
+    let result = await productModel.findOne({_id:productId});
+    res.send({result: "success", payload: result});
     } catch (error) {
-        console.error('Error while deleting the product', error);
-        res.status(500).json({ error: 'Server Internal Error' });
+      console.error('Error while fetching the product', error);
+      res.status(500).json({ error: 'Error while fetching product' });
+      
     }
 });
+
+
+
+
+
 
 export default router;

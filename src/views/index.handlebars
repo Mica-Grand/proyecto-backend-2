@@ -1,0 +1,33 @@
+<h1>{{title}}</h1>
+
+
+<div>
+    <ul id="product-list">
+        {{#each products}}
+        <li data-id="{{id}}">
+            <h2>{{ title }}</h2>
+            <img src={{{thumbnails}}}>
+            <p>{{description}}</p>
+            <p>${{price}}</p>
+            <form action="api/carts/66affd4bc723a31ad3519e85/products/{{_id}}" method="POST">
+                <input type="hidden" name="pid" value="{{_id}}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit">Agregar</button>
+            </form>
+        </li>
+        {{/each}}
+
+    </ul>
+</div>
+
+<div>
+    {{#if hasPrevPage}}
+    <a href={{prevLink}}>Previous</a>
+    {{/if}}
+
+    <span>Page {{page}} of {{totalPages}}</span>
+
+    {{#if hasNextPage}}
+    <a href={{nextLink}}>Next</a>
+    {{/if}}
+</div>
