@@ -1,6 +1,6 @@
 # Proyecto Backend Coderhouse
 
-Esta app es el proyecto del curso de Backend de Coderhouse. En esta ocasión se encuentra actualizada con los requerimientos de la Preentrega N° 2.
+Esta app es el proyecto del curso de Backend I de Coderhouse. En esta ocasión se encuentra actualizada con los requerimientos de la Preentrega N° 3.
 
 ## Información del Proyecto
 
@@ -12,18 +12,20 @@ Esta app es el proyecto del curso de Backend de Coderhouse. En esta ocasión se 
    
 - ### Descripción:
 
-  Es una aplicación desarrollada en Node.js utilizando el framework Express, diseñada para gestionar productos y carritos mediante el uso de persistencia en sistema de archivos (en una futura versión se implementará MongoDb). Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre productos almacenados en un archivo JSON y también gestionar carritos de compra.
-  En esta entrega se han implementado Handlebars y Socket.IO para mejorar la interacción en tiempo real.
+  Es una aplicación desarrollada en Node.js utilizando el framework Express, diseñada para gestionar productos y carritos mediante el uso de persistencia en Mongo Db Atlas. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre productos almacenados en la database y también gestionar carritos de compra.
+  
 
 - ### Características:
-  - Eliminar y agregar carritos y ver la vista en tiempo real.
-  - Crear, listar, actualizar y eliminar productos.
+  - Eliminar y agregar productos del catálogo y ver la vista en tiempo real.
+  - Crear, obtener, actualizar y eliminar productos del catálogo.
   - Crear carritos de compra.
   - Agregar productos a los carritos existentes.
-  - Visualizar el contenido de los carritos.
+  - Obtener el contenido de los carritos.
+  - Eliminar productos de los carritos.
   - Vistas:
-    Home ("/"): Página principal, que carga todos los productos guardados con fs en products.json.
-    Realtime Products ("/realtimeproducts"): Permite, a través d eun formulario y botones, agregar y eliminar productos y ver los cambios en la vista en tiempo real usando Socket.IO. Además se utiliza Sweet Alert para mostrar mensajes de bienvenida y de confirmación al eliminar y agregar productos
+   Cuenta con vistas desarrolladas con handlebars. Las mismas permiten navegar hacia el catálogo de products y vista de cart. 
+  <p style="color:red;">IMPORTANTE: Por el momento la id del cart al que se agregan los products está hardcodeada, hasta tanto se implemente sessions y users.</p> 
+   Se conserva la vista de Realtimeproducts de la entrega anterior, que mediante Socket.IO, permite al usuario agregar y quitar productos del catálogo de productos y ver cómo el catálogo se actualiza en tiempo real.
 
 - ### Tecnologías utilizadas:
   - Node.js
@@ -31,8 +33,10 @@ Esta app es el proyecto del curso de Backend de Coderhouse. En esta ocasión se 
   - Handlebars.
   - Socket.IO.
   - Sweet Alert.
-  - Persistencia: Mongoose.
+  - Persistencia: Mongo Db Atlas.
+  - Mongoose.
   - Mongoose-paginate-v2.
+  - Bootstrap.
 
 
 ## Instalación
@@ -58,7 +62,8 @@ npm start
 
 - **Obtener todos los productos:**
   - URL: `http://localhost:8080/api/products`
-  - Filtros opcionales, a solicitar mediante query: 
+
+- **Filtros opcionales, a solicitar mediante query:**
     -Page (si no se proporciona un valor, se otorga la page 1).
      URL: `http://localhost:8080/api/products?page=2`
     - Limit (si no se proporciona, por default es 10):
@@ -72,39 +77,40 @@ npm start
     - Múltiples queries:
     URL: `http://localhost:8080/api/products?sort=asc&query=true&page=2&limit=4`
 
- 
-
-
 - **Obtener un producto por su ID:**
   - URL: `http://localhost:8080/api/products/:pid`
-  - Ejemplo: `http://localhost:8080/api/products/1`
+  - Ejemplo: `http://localhost:8080/api/products/66b41580fddd12e794da120b`
 
 **POST:**
 
 - **Crear un nuevo producto:**
   - URL: `http://localhost:8080/api/products`
-  - Body (JSON):
-    ```json
-    {
-      "title": "Producto nuevo 2",
-      "description": "Producto excelente",
-      "price": 5559,
-      "thumbnails": [
-        "url_thumbnail1.jpg",
-        "url_thumbnail2.jpg"
-      ],
-      "code": "ASFG3",
-      "category": "Nueva category",
-      "stock": 10
-    }
-    ```
+  - Ejemplo de Body (JSON):
+    
+```json
+{
+    "title": "Oil Control Serum",
+    "description": " A high-strength vitamin-and-mineral blemish formula with pure niacinamide.",
+    "price": 3000,
+    "thumbnails": [
+        "https://www.sephora.com/productimages/sku/s2031391-main-zoom.jpg?imwidth=166"
+    ],
+    "code": "9988776",
+    "stock": 20,
+    "category": "skincare",
+    "status": true
+
+}
+```
+
+
 
 **PUT:**
 
 - **Actualizar un producto por su ID:**
   - URL: `http://localhost:8080/api/products/:pid`
-  - Body (JSON) con campos permitidos: `stock`, `description`, `price`, `category`, `thumbnails`.
-  - Ejemplo: `http://localhost:8080/api/products/9`
+  - Body (JSON) con campos permitidos: `stock`, `description`, `price`, `category`, `thumbnails`,  `title`, `code`, `status`.
+  - Ejemplo: `http://localhost:8080/api/products/66b41607b0607ca7f1a4e9e3`
     ```json
     {
       "stock": 5,
@@ -116,7 +122,7 @@ npm start
 
 - **Eliminar un producto por su ID:**
   - URL: `http://localhost:8080/api/products/:pid`
-  - Ejemplo: `http://localhost:8080/api/products/7`
+  - Ejemplo: `http://localhost:8080/api/products/66b41607b0607ca7f1a4e9e3`
 
 ### CARTS
 
@@ -124,21 +130,36 @@ npm start
 
 - **Crear un nuevo carrito vacío:**
   - URL: `http://localhost:8080/api/carts`
-  - Crea un carrito nuevo con una estructura inicial vacía.
+  - Crea un carrito nuevo con una estructura inicial vacía. El result es:
+  ```json
+  {
+    "result": "success",
+    "payload": {
+        "products": [],
+        "_id": "66b91cce032e0581cd8b53e9",
+        "__v": 0
+    }
+    ```
 
 **POST (Agregar producto al carrito):**
 
 - **Agregar un producto al carrito por IDs:**
-  - URL: `http://localhost:8080/api/carts/:cid/product/:pid`
-  - Ejemplo: `http://localhost:8080/api/carts/2/product/3`
-  - Cada solicitud incrementa la cantidad del producto en 1.
+  - URL: `http://localhost:8080/api/carts/:cid/products/:pid`
+  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85/products/66b415a9b0607ca7f1a4e9db`
+  - La quantity se debe pasar por body:
+  ```json
+  {
+    "quantity": "3"
+    }
+    ```
+
 
 **GET:**
 
 - **Obtener un carrito por su ID:**
   - URL: `http://localhost:8080/api/carts/:cid`
-  - Ejemplo: `http://localhost:8080/api/carts/1`
-  - Lista todos los productos contenidos en el carrito especificado.
+  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85`
+  - Lista todos los productos contenidos en el carrito especificado y realiza populate para traer las propiedades de cada producto.
 
 ## Vistas
 
@@ -147,6 +168,8 @@ npm start
 - **Navegar a la lista de productos (catálogo):**
 - URL: `http://localhost:8080/products`
 - Muestra una lista de todos los productos disponibles.
+  Cuenta con un botón de agregar al carrito.
+  Por el momento no se implementó la vista de los detalles de cada producto.
 - Permite filtrar y ordenar mediante queries:
   - Page (si no se proporciona, por default es 1)
     URL:`http://localhost:8080/products?page=2`
@@ -155,18 +178,24 @@ npm start
   - Sort: opción "asc", los ordena por precio de manera ascendente, cualquier     otra cosa los ordena de manera descendente.
     URL:`http://localhost:8080/products?sort=asc`
   - Filter query=category, debe recibir nombre de categoría, por ejemplo, makeup.
-    URL:`http://localhost:8080/products?query=tools`
+    URL:`http://localhost:8080/products?query=makeup`
   - Filter query=status, recibe true o false que se convierte a boolean y filtra de acuerdo a la propiedad "status" del producto.
     URL:`http://localhost:8080/products?query=false`
   - Aplicando filtros múltiples:
     URL: `http://localhost:8080/products?sort=asc&query=true&page=2&limit=4`
 
+### CART
+
+- **Visualizar el cart con los productos agregados**
+- URL: `http://localhost:8080/cart/66affd4bc723a31ad3519e85`
+Por el momento, el cart al que se agregan los productos mediante el botón está harcodeado con el carrito con id 66affd4bc723a31ad3519e85
+hasta tanto se implemente users y sessions.
+En esta vista se pueden ver los productos agregados y eliminarlos del carrito mediante un botón.
 
 
 
 
-
-## Ejemplos de uso con Postman
+## Capturas de ejemplos de uso con Postman
 ### Obtener todos los productos
 
 ![Obtener todos los productos](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/GET-api-products.png)
@@ -193,7 +222,7 @@ npm start
 
 ### Agregar un producto al carrito por id
 
-![Agregar un producto al carrito](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/POST-api-carts-cid-product-pid.JPG)
+![Agregar un producto al carrito](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/POST-api-carts-cid-products-pid.JPG)
 
 ### Obtener un carrito por su ID
 

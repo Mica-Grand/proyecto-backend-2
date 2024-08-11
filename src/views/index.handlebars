@@ -1,34 +1,42 @@
-<h1>{{title}}</h1>
+<h1 class="text-center my-4">{{title}}</h1>
 
 {{#if isValid}}
-
-<div>
-    <ul id="product-list">
+<div class="container">
+    <ul id="product-list" class="list-group">
         {{#each products}}
-        <li data-id="{{_id}}">
-            <h2>{{ title }}</h2>
-            <img src={{{thumbnails}}}>
-            <p>{{description}}</p>
-            <p>${{price}}</p>
-            <button class="add-to-cart-button" data-pid="{{_id}}">Agregar al carrito</button>
+        <li class="list-group-item mb-4">
+            <div class="row">
+                <div class="col-md-4">
+                    <img src="{{thumbnails}}" class="img-fluid rounded" alt="{{title}}">
+                </div>
+                <div class="col-md-8 d-flex flex-column justify-content-between">
+                    <div>
+                        <h2>{{title}}</h2>
+                        <p>{{description}}</p>
+                        <p class="text-success fw-bold">${{price}}</p>
+                    </div>
+                    <button class="btn btn-primary mt-3 add-to-cart-button align-self-start" data-pid="{{_id}}">
+                        Add to cart
+                    </button>
+                </div>
+            </div>
         </li>
         {{/each}}
-
-
     </ul>
 </div>
 
-<div>
-    {{#if hasPrevPage}}
-    <a href={{prevLink}}>Previous</a>
-    {{/if}}
-
-    <span>Page {{page}} of {{totalPages}}</span>
-
-    {{#if hasNextPage}}
-    <a href={{nextLink}}>Next</a>
-    {{/if}}
+<div class="d-flex flex-column align-items-center mt-4">
+    <span class="mb-2">Page {{page}} of {{totalPages}}</span>
+    <div>
+        {{#if hasPrevPage}}
+        <a href="{{prevLink}}" class="btn btn-secondary me-2">Previous</a>
+        {{/if}}
+        {{#if hasNextPage}}
+        <a href="{{nextLink}}" class="btn btn-secondary">Next</a>
+        {{/if}}
+    </div>
 </div>
+
 {{else}}
-<h2>No hay productos para mostrar</h2>
+<h2 class="text-center text-muted my-4">There´s no products to show</h2>
 {{/if}}

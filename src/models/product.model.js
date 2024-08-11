@@ -12,7 +12,7 @@ const productSchema =  mongoose.Schema({
     code: {type: String, required: true},
     stock: {type: Number, required: true, min: 0},
     category: {type: String, required: true},
-    status: {type: Boolean, default: true},
+    status: {type: Boolean, required: true, default: true},
 })
 
 productSchema.plugin(mongoosePaginate);

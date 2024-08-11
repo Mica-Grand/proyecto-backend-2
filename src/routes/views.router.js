@@ -15,7 +15,7 @@ router.get('/realtimeproducts', async (req, res) => {
        
         res.render('realTimeProducts',  {
             products: result.docs,
-            title: 'Productos en tiempo real',
+            title: 'Real time products',
             useWS: true,
             scripts: ['realtime.js'],
         });
@@ -56,7 +56,7 @@ router.get('/products', async (req, res) => {
     result.nextLink = result.hasNextPage ? `?page=${result.nextPage}&limit=${limit}&sort=${sort}&query=${query}` : null
     result.isValid = !(page <= 0 || page > result.totalPages)
         res.render('index', {
-            title: 'Productos',
+            title: 'Products',
             products: result.docs,
             payload: result.docs,
             totalPages: result.totalPages,
@@ -90,7 +90,6 @@ router.get('/cart/:cid', async (req, res) => {
         let cartLength = result.products.length 
         let emptyCart = cartLength === 0;
 
-        console.log(emptyCart)
         res.render('cart', { 
             title: 'Cart',
             cart: result.products,
