@@ -31,6 +31,8 @@ Esta app es el proyecto del curso de Backend de Coderhouse. En esta ocasión se 
   - Handlebars.
   - Socket.IO.
   - Sweet Alert.
+  - Persistencia: Mongoose.
+  - Mongoose-paginate-v2.
 
 
 ## Instalación
@@ -56,7 +58,22 @@ npm start
 
 - **Obtener todos los productos:**
   - URL: `http://localhost:8080/api/products`
-  - Parámetros opcionales: `limit` para limitar el número de productos obtenidos.
+  - Filtros opcionales, a solicitar mediante query: 
+    -Page (si no se proporciona un valor, se otorga la page 1).
+     URL: `http://localhost:8080/api/products?page=2`
+    - Limit (si no se proporciona, por default es 10):
+     URL:`http://localhost:8080/api/products?limit=4`
+    - Sort. Opciones: asc y desc
+     URL `http://localhost:8080/api/products?sort=asc`
+    - Filter query=category, debe recibir nombre de categoría, por ejemplo, makeup.
+    URL:`http://localhost:8080/api/products?query=haircare`
+    - Filter query=status, recibe true o false que se convierte a boolean y filtra de acuerdo a la propiedad "status" del producto.
+    URL:`http://localhost:8080/api/products?query=false`
+    - Múltiples queries:
+    URL: `http://localhost:8080/api/products?sort=asc&query=true&page=2&limit=4`
+
+ 
+
 
 - **Obtener un producto por su ID:**
   - URL: `http://localhost:8080/api/products/:pid`
@@ -122,6 +139,31 @@ npm start
   - URL: `http://localhost:8080/api/carts/:cid`
   - Ejemplo: `http://localhost:8080/api/carts/1`
   - Lista todos los productos contenidos en el carrito especificado.
+
+## Vistas
+
+### PRODUCTS
+
+- **Navegar a la lista de productos (catálogo):**
+- URL: `http://localhost:8080/products`
+- Muestra una lista de todos los productos disponibles.
+- Permite filtrar y ordenar mediante queries:
+  - Page (si no se proporciona, por default es 1)
+    URL:`http://localhost:8080/products?page=2`
+  - Limit (si no se proporciona, por default es 10)
+    URL:`http://localhost:8080/products?limit=4`
+  - Sort: opción "asc", los ordena por precio de manera ascendente, cualquier     otra cosa los ordena de manera descendente.
+    URL:`http://localhost:8080/products?sort=asc`
+  - Filter query=category, debe recibir nombre de categoría, por ejemplo, makeup.
+    URL:`http://localhost:8080/products?query=tools`
+  - Filter query=status, recibe true o false que se convierte a boolean y filtra de acuerdo a la propiedad "status" del producto.
+    URL:`http://localhost:8080/products?query=false`
+  - Aplicando filtros múltiples:
+    URL: `http://localhost:8080/products?sort=asc&query=true&page=2&limit=4`
+
+
+
+
 
 
 ## Ejemplos de uso con Postman

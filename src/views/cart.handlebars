@@ -1,0 +1,27 @@
+<h1>{{title}}</h1>
+{{#if emptyCart}}
+<div>
+    <h2>Empty Cart</h2>
+    <p>The cart is empty. Add some products.
+    <a href="http://localhost:8080/products">¡Let's buy!</a>
+    </p>
+</div>
+{{else}}
+<div class="container">
+<ul>
+    {{#each cart}} 
+    <li data-id="{{productId._id}}">
+        <h2>{{productId.title}}</h2> 
+        <img src={{{productId.thumbnails}}}>
+        <p>Price: ${{productId.price}}</p>
+        <p>Category: {{productId.category}}</p>
+        <p>Qty: {{quantity}}</p>
+
+        <button class="delete-from-cart-button" data-pid="{{productId._id}}">Eliminar del carrito</button>
+
+
+    </li>
+    {{/each}}
+</ul>
+</div>
+{{/if}}

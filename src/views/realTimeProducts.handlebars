@@ -1,9 +1,9 @@
 <h1>{{title}}</h1>
 
 <div>
-    <ul id="product-list">
+    <ul id="rt-product-list">
         {{#each products}}
-        <li data-id="{{id}}">
+        <li data-id="{{_id}}">
             <h2>{{ title }}</h2>
             <img src={{{thumbnails}}}>
             <p>{{description}}</p>
@@ -39,8 +39,9 @@
         <label for="category">Categoría:</label>
         <input type="text" id="category" name="category" required><br>
 
+        <label for="status">Status:</label>
+        <input type="text" id="status" name="status"><br>
+
         <button type="submit">Agregar Producto</button>
     </form>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="/js/index.js"></script>

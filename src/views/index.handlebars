@@ -1,21 +1,19 @@
 <h1>{{title}}</h1>
 
+{{#if isValid}}
 
 <div>
     <ul id="product-list">
         {{#each products}}
-        <li data-id="{{id}}">
+        <li data-id="{{_id}}">
             <h2>{{ title }}</h2>
             <img src={{{thumbnails}}}>
             <p>{{description}}</p>
             <p>${{price}}</p>
-            <form action="api/carts/66affd4bc723a31ad3519e85/products/{{_id}}" method="POST">
-                <input type="hidden" name="pid" value="{{_id}}">
-                <input type="hidden" name="quantity" value="1">
-                <button type="submit">Agregar</button>
-            </form>
+            <button class="add-to-cart-button" data-pid="{{_id}}">Agregar al carrito</button>
         </li>
         {{/each}}
+
 
     </ul>
 </div>
@@ -31,3 +29,6 @@
     <a href={{nextLink}}>Next</a>
     {{/if}}
 </div>
+{{else}}
+<h2>No hay productos para mostrar</h2>
+{{/if}}

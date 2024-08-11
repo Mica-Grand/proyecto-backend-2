@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import cartModel from '../models/cart.model.js';
+import productModel from '../models/product.model.js'
 
 const router = Router();
 
@@ -10,6 +11,21 @@ router.post('/', async (req, res) => {
     res.send({ result: "success", payload: result });
   } catch (error) {
     console.error('Error while creating a new cart:', error);
+    res.status(500).send({ result: "error", payload: error });
+  }
+});
+
+// Obtiene carrito por ID
+router.get('/:cid', async (req, res) => {
+  const { cid } = req.params;
+  try {
+    let cart = await cartModel.findOne({ _id: cid }).populate('products.productId').lean();
+    if (!cart) {
+      throw new Error('El carrito no existe');
+    }
+    res.send({ result: "success", payload: cart });
+  } catch (error) {
+    console.error('Error while fetching a cart:', error);
     res.status(500).send({ result: "error", payload: error });
   }
 });
@@ -43,20 +59,7 @@ router.post('/:cid/products/:pid', async (req, res) => {
   }
 });
 
-// Obtiene carrito por ID
-router.get('/:cid', async (req, res) => {
-  try {
-    const { cid } = req.params;
-    let cart = await cartModel.findById(cid).populate('products.productId');
-    if (!cart) {
-      throw new Error('El carrito no existe');
-    }
-    res.send({ result: "success", payload: cart });
-  } catch (error) {
-    console.error('Error while fetching a cart:', error);
-    res.status(500).send({ result: "error", payload: error });
-  }
-});
+
 
 // Actualiza cantidad de producto en el carrito
 router.put('/:cid/products/:pid', async (req, res) => {
@@ -94,10 +97,11 @@ router.delete('/:cid/products/:pid', async (req, res) => {
   try {
     const cart = await cartModel.findById(cid);
     cart.products = cart.products.filter(item => item.productId.toString() !== pid);
+    
     await cart.save();
-    res.json({ status: 'success', message: 'Product removed from cart' });
+    res.send({ result: "success", payload: cart });
   } catch (error) {
-    res.status(500).json({ status: 'error', message: error.message });
+    res.status(500).send({ result: "error", payload: error });
   }
 });
 

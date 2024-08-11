@@ -9,9 +9,18 @@ router.get('/', async (req, res) => {
   if (!page) page = 1;
   if (!limit) limit = 10;
 
+
   let filter = {};
+
+  if (query === 'undefined') query = '';
   if (query) {
-    filter = { $or: [{ category: query }, { status: query }] };
+    const isBoolean = query.toLowerCase() === 'true' || query.toLowerCase() === 'false';
+
+    if (isBoolean) {
+      filter = { status: query.toLowerCase() === 'true' };
+    } else {
+      filter = { category: query };
+    }
   }
 
   const options = {
@@ -22,8 +31,8 @@ router.get('/', async (req, res) => {
   };
   try {
     const result = await productModel.paginate(filter, options);
-    result.prevLink = result.hasPrevPage ? `http://localhost:8080/products?page=${result.prevPage}` : '';
-    result.nextLink = result.hasNextPage ? `http://localhost:8080/products?page=${result.nextPage}` : '';
+    result.prevLink = result.hasPrevPage ? `?page=${result.prevPage}&limit=${limit}&sort=${sort}&query=${query}` : null;
+    result.nextLink = result.hasNextPage ? `?page=${result.nextPage}&limit=${limit}&sort=${sort}&query=${query}` : null
     result.isValid = !(page <= 0 || page > result.totalPages)
     res.send({ result: "success", payload: result });
   } catch (error) {
@@ -34,11 +43,15 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-      let { title, description, code, price, stock, category, thumbnails } = req.body;
-      if (!title || !description || !code || !price || !stock || !category) {
-        res.send({status:"error", error:"All fields are mandatory, except thumbnails."});
+      let { title, description, code, price, stock, category, thumbnails, status } = req.body;
+      console.log(req.body);
+      if (!title || !description || !code || !price || stock === undefined || stock === null|| !category ) {
+        return res.send({status:"error", error:"All fields are mandatory, except thumbnails."});
     }
-      let result = await productModel.create({title, description, code, price, stock, category, thumbnails});
+      if (typeof status === 'undefined') {
+      return res.send({status:"error", error:"The status field is mandatory."});
+    }
+      let result = await productModel.create({title, description, code, price, stock, category, thumbnails, status});
       res.send({result: "success", payload: result});
   } catch (error) {
       console.error('Error  while creating a new product:', error);
@@ -57,6 +70,7 @@ router.put("/:pid", async (req, res) => {
       "stock",
       "category",
       "thumbnails",
+      "status"
     ];
 
     const updatedFields = {};
@@ -96,8 +110,7 @@ router.get("/:pid", async (req, res) => {
   try {
     const productId = req.params.pid;
     if (!productId) {
-      res.status(400).json({ error: "Invalid product ID. Enter a valid ID" });
-      return;
+      return res.status(400).json({ error: "Invalid product ID. Enter a valid ID" });
     }
     let result = await productModel.findOne({_id:productId});
     res.send({result: "success", payload: result});
