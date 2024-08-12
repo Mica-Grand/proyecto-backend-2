@@ -15,21 +15,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Obtiene carrito por ID
-router.get('/:cid', async (req, res) => {
-  const { cid } = req.params;
-  try {
-    let cart = await cartModel.findOne({ _id: cid }).populate('products.productId').lean();
-    if (!cart) {
-      throw new Error('El carrito no existe');
-    }
-    res.send({ result: "success", payload: cart });
-  } catch (error) {
-    console.error('Error while fetching a cart:', error);
-    res.status(500).send({ result: "error", payload: error });
-  }
-});
-
 // Agrega producto al carrito
 router.post('/:cid/products/:pid', async (req, res) => {
   const { cid, pid } = req.params;
@@ -59,6 +44,17 @@ router.post('/:cid/products/:pid', async (req, res) => {
   }
 });
 
+// Obtiene carrito por ID
+router.get('/:cid', async (req, res) => {
+  const { cid } = req.params;
+  try {
+    let cart = await cartModel.findOne({ _id: cid }).populate('products.productId').lean();
+    res.send({ result: "success", payload: cart });
+  } catch (error) {
+    console.error('Error while fetching a cart:', error);
+    res.status(500).send({ result: "error", payload: error });
+  }
+});
 
 
 // Actualiza cantidad de producto en el carrito
@@ -77,19 +73,40 @@ router.put('/:cid/products/:pid', async (req, res) => {
   }
 });
 
-// Actualiza productos en el carrito
 router.put('/:cid', async (req, res) => {
   const { cid } = req.params;
   const { products } = req.body;
+
+  if (!products || !Array.isArray(products)) {
+    return res.status(400).send({ result: "error", message: "Products array is required and must be an array" });
+  }
+
   try {
-    let result = await cartModel.updateOne({ _id: cid }, { products });
-    result = await cartModel.findById(cid).populate('products.productId');
-    res.send({ result: "success", payload: result });
+    let cart = await cartModel.findOne({ _id: cid })
+    if (!cart) {
+      return res.status(404).send({ result: "error", message: "Cart not found" });
+    }
+
+    const productIds = products.map(product => product.productId);
+    const existingProducts = await productModel.find({ _id: { $in: productIds } }).lean();
+
+    if (existingProducts.length !== productIds.length) {
+      return res.status(404).send({ result: "error", message: "One or more products not found" });
+    }
+
+    cart.products = products;
+    await cart.save();
+
+    const updatedCart = await cartModel.findById(cid).populate('products.productId');
+
+    res.send({ result: "success", payload: updatedCart });
+
   } catch (error) {
-    console.error('Error while updating a cart:', error);
-    res.status(500).send({ result: "error", payload: error });
+    console.error('Error updating cart:', error);
+    res.status(500).send({ result: "error", message: error.message });
   }
 });
+
 
 // Elimina producto del carrito
 router.delete('/:cid/products/:pid', async (req, res) => {

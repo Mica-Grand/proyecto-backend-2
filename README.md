@@ -126,6 +126,13 @@ npm start
 
 ### CARTS
 
+**GET:**
+
+- **Obtener un carrito por su ID:**
+  - URL: `http://localhost:8080/api/carts/:cid`
+  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85`
+  - Lista todos los productos contenidos en el carrito especificado y realiza populate para traer las propiedades de cada producto.
+
 **POST:**
 
 - **Crear un nuevo carrito vacío:**
@@ -138,6 +145,7 @@ npm start
         "products": [],
         "_id": "66b91cce032e0581cd8b53e9",
         "__v": 0
+    }
     }
     ```
 
@@ -153,13 +161,53 @@ npm start
     }
     ```
 
-
 **GET:**
 
 - **Obtener un carrito por su ID:**
   - URL: `http://localhost:8080/api/carts/:cid`
   - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85`
   - Lista todos los productos contenidos en el carrito especificado y realiza populate para traer las propiedades de cada producto.
+
+**PUT:**
+
+- **actualizar la cantidad de un producto determinado:**
+  - URL: `http://localhost:8080/carts/:cid/products/:pid`
+  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85/products/66b415e8b0607ca7f1a4e9e1`
+  - Actualiza la cantidad de un producto determinado que ya se encuentra en el carrito.
+  La quantity se debe pasar por BODY:
+    ```json
+  {
+    "quantity": "5"
+    }
+    ```
+  
+- **actualizar el carrito con un arreglo de productos:**
+  - URL: `http://localhost:8080/api/carts/:cid`
+  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85`
+  - Actualiza el carrito con un arreglo de productos.
+  El array de products se envía por body. La solicitud debe tener este formato:
+  
+  ```json
+   {
+  "products": [
+    { "productId": "66affaa665135718e16d156d", "quantity": 2 },
+    { "productId": "66affabf15462968a221eddd", "quantity": 1 }
+  ]
+  }
+
+    ```
+
+**DELETE:**
+
+- **Elimina producto seleccionado del carrito:**
+  - URL: `http://localhost:8080/api/carts/:cid/products/:pid`
+  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85/products/66affaa665135718e16d156d`
+  - Elimina del cart pasado por param el producto pasado por param.
+
+- **Vacía el cart del id seleccionado:**
+  - URL: `http://localhost:8080/api/carts/:cid`
+  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85/products/66affaa665135718e16d156d`
+  - Vacía el cart especificado con id por params, en este caso, 66affaa665135718e16d156d
 
 ## Vistas
 
@@ -168,7 +216,7 @@ npm start
 - **Navegar a la lista de productos (catálogo):**
 - URL: `http://localhost:8080/products`
 - Muestra una lista de todos los productos disponibles.
-  Cuenta con un botón de agregar al carrito.
+  Cuenta con un botón de agregar al carrito, que agrega 1 unidad del producto.
   Por el momento no se implementó la vista de los detalles de cada producto.
 - Permite filtrar y ordenar mediante queries:
   - Page (si no se proporciona, por default es 1)
@@ -193,42 +241,54 @@ hasta tanto se implemente users y sessions.
 En esta vista se pueden ver los productos agregados y eliminarlos del carrito mediante un botón.
 
 
-
-
 ## Capturas de ejemplos de uso con Postman
 ### Obtener todos los productos
 
-![Obtener todos los productos](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/GET-api-products.png)
+![Obtener todos los productos](src/public/img/GET-api-products.png)
 
 ### Obtener un producto por su ID
 
-![Obtener un producto por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/GET-api-products-pid.JPG)
+![Obtener un producto por su ID](src/public/img/GET-api-products-pid.JPG)
 
 ### Crear un nuevo producto
 
-![Crear un nuevo producto](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/POST-api-products.JPG)
+![Crear un nuevo producto](src/public/img/POST-api-products.JPG)
 
 ### Actualizar un producto por su ID
 
-![Actualizar un producto por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/PUT-api-products-pid.JPG)
+![Actualizar un producto por su ID](src/public/img/PUT-api-products-pid.JPG)
 
 ### Eliminar un producto por su ID
 
-![Eliminar un producto por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/DELETE-api-products-pid.JPG)
+![Eliminar un producto por su ID](src/public/img/DELETE-api-products-pid.JPG)
 
 ### Crear un nuevo carrito
 
-![Crear un nuevo carrito](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/POST-api-carts.JPG)
+![Crear un nuevo carrito](src/public/img/POST-api-carts.JPG)
 
 ### Agregar un producto al carrito por id
 
-![Agregar un producto al carrito](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/POST-api-carts-cid-products-pid.JPG)
+![Agregar un producto al carrito](src/public/img/POST-api-carts-cid-products-pid.JPG)
 
 ### Obtener un carrito por su ID
 
-![Obtener un carrito por su ID](https://github.com/Mica-Grand/proyecto-backend-grandoso/blob/main/src/public/img/GET-api-carts-cid.JPG)
+![Obtener un carrito por su ID](src/public/img/GET-api-carts-cid.JPG)
 
+### Actualizar la quantity de un producto en un carrito
 
+![Actualiza quantity de producto](src/public/img/GET-api-carts-cid-products-pid.JPG)
+
+### Actualizar un cart específico con un array de productos 
+
+![Actualiza cart con array](src/public/img/PUT-api-carts-cid-array)
+
+### Eliminar un producto del cart por id
+
+![Elimina del cart](src/public/img/DELETE-api-carts-cid-pid.JPG)
+
+### Vacía el cart especificado por id
+
+![Vacía el cart](src/public/img/DELETE-api-carts-cid.JPG)
 
 
 
