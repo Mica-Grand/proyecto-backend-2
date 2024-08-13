@@ -154,12 +154,13 @@ npm start
 - **Agregar un producto al carrito por IDs:**
   - URL: `http://localhost:8080/api/carts/:cid/products/:pid`
   - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85/products/66b415a9b0607ca7f1a4e9db`
-  - La quantity se debe pasar por body:
+  - La quantity se puede pasar por body:
   ```json
   {
     "quantity": "3"
     }
     ```
+Si no se pasa nada por body, la quantity será 1 por default.
 
 **GET:**
 

@@ -19,10 +19,16 @@ router.post('/', async (req, res) => {
 router.post('/:cid/products/:pid', async (req, res) => {
   const { cid, pid } = req.params;
   let { quantity } = req.body;
-  quantity = parseInt(quantity);
+
+  quantity = parseInt(quantity) || 1;
+
+  quantity = (quantity !== undefined && !isNaN(parseInt(quantity)) && parseInt(quantity) > 0) 
+  ? parseInt(quantity) 
+  : 1;
+ /* quantity = parseInt(quantity);
   if (isNaN(quantity)) {
     return res.status(400).send({ result: "error", message: "Invalid quantity" });
-  }
+  }*/
   try {
     let cart = await cartModel.findById(cid);
     if (!cart) {
