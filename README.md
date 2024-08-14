@@ -76,6 +76,7 @@ npm start
     URL:`http://localhost:8080/api/products?query=false`
     - Múltiples queries:
     URL: `http://localhost:8080/api/products?sort=asc&query=true&page=2&limit=4`
+     URL: `http://localhost:8080/api/products?limit=5&query=makeup&query=true&sort=asc&page=2`
 
 - **Obtener un producto por su ID:**
   - URL: `http://localhost:8080/api/products/:pid`

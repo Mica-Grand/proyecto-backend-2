@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const addToCartButtons = document.querySelectorAll(".add-to-cart-button");
 
@@ -42,26 +43,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //filtros
 
-  const filterForm = document.getElementById("filter-form");
+  const form = document.getElementById('filter-form');
 
-  filterForm.addEventListener("submit", (event) => {
-    event.preventDefault();
+  form.addEventListener('submit', (event) => {
+      event.preventDefault(); 
 
-    const category = document.getElementById("category-select").value;
-    const status = document.getElementById("status-select").value;
-    const sort = document.getElementById("sort-select").value;
-    const limit = document.getElementById("limit-select").value || 10;
-    
+      const category = document.getElementById('category-select').value;
+      const status = document.getElementById('status-select').value;
+      const sort = document.getElementById('sort-select').value;
+      const limit = document.getElementById('limit-select').value;
 
-    
+  
+      let queryString = '?';
+      if (category) queryString += `category=${category}&`;
+      if (status) queryString += `status=${status}&`;
+      if (sort) queryString += `sort=${sort}&`;
+      if (limit) queryString += `limit=${limit}&`;
 
 
-    const queryParams = new URLSearchParams();
-    if (category) queryParams.append("query", category);
-    if (status) queryParams.append("query", status);
-    if (sort) queryParams.append("sort", sort);
-    if (limit) queryParams.append("limit", limit);
+      queryString = queryString.slice(0, -1);
 
-    window.location.href = `/products?${queryParams.toString()}`;
+
+      window.location.href = `/products${queryString}`;
   });
 });

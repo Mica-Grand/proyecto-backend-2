@@ -6,6 +6,7 @@ import cartModel from '../models/cart.model.js';
 
 
 
+
 const router = express.Router();
 
 router.get('/realtimeproducts', async (req, res) => {
@@ -26,44 +27,40 @@ router.get('/realtimeproducts', async (req, res) => {
 });
 
 router.get('/products', async (req, res) => {
-    let { limit, page, sort, query } = req.query;
-  if (!page) page = 1;
-  if (!limit) limit = 10;
+    let { limit, page, sort, category, status } = req.query;
+    if (!page) page = 1;
+    if (!limit) limit = 10;
 
-  let filter = {};
+    let filter = {};
 
-  if (query === 'undefined') query = '';
-
-  if (Array.isArray(query)) {
-        query.forEach(val => {
-            const isBoolean = val.toLowerCase() === 'true' || val.toLowerCase() === 'false';
-            if (isBoolean) {
-                filter.status = val.toLowerCase() === 'true';
-            } else {
-                filter.category = val;
-            }
-        });
-    } else if (query) {
-        const isBoolean = query.toLowerCase() === 'true' || query.toLowerCase() === 'false';
-
-        if (isBoolean) {
-            filter.status = query.toLowerCase() === 'true';
-        } else {
-            filter.category = query;
-        }
+    if (category) {
+        filter.category = category;
     }
+    if (status !== undefined) {
+        filter.status = status === 'true'; 
+    }
+    const options = {
+        limit: parseInt(limit),
+        page: parseInt(page),
+        sort: sort ? { price: sort === "asc" ? 1 : -1 } : {},
+        lean: true
+    };
 
-  const options = {
-    limit: parseInt(limit),
-    page: parseInt(page),
-    sort: sort ? { price: sort === "asc" ? 1 : -1 } : {},
-    lean:true
-  };
-  try {
-    const result = await productModel.paginate(filter, options);
-    result.prevLink = result.hasPrevPage ? `?page=${result.prevPage}&limit=${limit}&sort=${sort}&query=${query}` : null,
-    result.nextLink = result.hasNextPage ? `?page=${result.nextPage}&limit=${limit}&sort=${sort}&query=${query}` : null
-    result.isValid = !(page <= 0 || page > result.totalPages)
+    try {
+        const result = await productModel.paginate(filter, options);
+        const queryObj = {};
+        if (category) queryObj.category = category;
+        if (status) queryObj.status = status;
+        if (sort) queryObj.sort = sort;
+        if (limit) queryObj.limit = limit;
+
+        const buildQueryString = (page) => {
+            return `?page=${page}&${new URLSearchParams(queryObj).toString()}`;
+        };
+
+        result.prevLink = result.hasPrevPage ? buildQueryString(result.prevPage) : null;
+        result.nextLink = result.hasNextPage ? buildQueryString(result.nextPage) : null;
+
         res.render('index', {
             title: 'Products',
             products: result.docs,
@@ -76,17 +73,15 @@ router.get('/products', async (req, res) => {
             hasNextPage: result.hasNextPage,
             prevLink: result.prevLink,
             nextLink: result.nextLink,
-            isValid: result.isValid,
+            isValid: !(page <= 0 || page > result.totalPages),
             scripts: ['index.js']
-
-
-    
         });
     } catch (error) {
         console.error("We can't show the products right now", error);
         res.status(500).send('Error while loading the products');
     }
 });
+
 
 router.get('/cart/:cid', async (req, res) => {
     const { cid } = req.params;
