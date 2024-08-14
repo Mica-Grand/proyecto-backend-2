@@ -1,5 +1,49 @@
 <h1 class="text-center my-4">{{title}}</h1>
 
+<div class="container mb-4">
+    <form id="filter-form" class="d-flex flex-column flex-md-row justify-content-md-between">
+        <div class="mb-2 mb-md-0">
+            <label for="category-select" class="form-label">Category:</label>
+            <select id="category-select" class="form-select">
+                <option value="">All Categories</option>
+                <option value="makeup">Makeup</option>
+                <option value="skincare">Skin care</option>
+                <option value="haircare">Hair care</option>
+                <option value="nails">Nails</option>
+                <option value="tools">Tools</option>
+            </select>
+        </div>
+        <div class="mb-2 mb-md-0">
+            <label for="status-select" class="form-label">Availability:</label>
+            <select id="status-select" class="form-select">
+                <option value="">All</option>
+                <option value="true">In stock</option>
+                <option value="false">Out of stock</option>
+            </select>
+        </div>
+        <div class="mb-2 mb-md-0">
+            <label for="sort-select" class="form-label">Sort By:</label>
+            <select id="sort-select" class="form-select">
+                <option value="">Default</option>
+                <option value="asc">Price: Low to High</option>
+                <option value="desc">Price: High to Low</option>
+            </select>
+        </div>
+        <div class="mb-2 mb-md-0">
+            <label for="limit-select" class="form-label">Show:</label>
+            <select id="limit-select" class="form-select">
+                <option value="">10 products</option>
+                <option value="5">5 products</option>
+                <option value="20">20 products</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary mt-2 mt-md-0">Apply Filters</button>
+        </div>
+        
+    </form>
+</div>
+
 {{#if isValid}}
 <div class="container">
     <ul id="product-list" class="list-group">
@@ -14,10 +58,15 @@
                         <h2>{{title}}</h2>
                         <p>{{description}}</p>
                         <p class="text-success fw-bold">${{price}}</p>
+                        {{#unless status}}
+                        <p class="text-danger fw-bold">Out of stock</p>
+                        {{/unless}}
                     </div>
+                    {{#if status}}
                     <button class="btn btn-primary mt-3 add-to-cart-button align-self-start" data-pid="{{_id}}">
                         Add to cart
                     </button>
+                    {{/if}}
                 </div>
             </div>
         </li>

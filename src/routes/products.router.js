@@ -11,18 +11,26 @@ router.get('/', async (req, res) => {
 
 
   let filter = {};
-
   if (query === 'undefined') query = '';
-  if (query) {
+
+  if (Array.isArray(query)) {
+    query.forEach(val => {
+        const isBoolean = val.toLowerCase() === 'true' || val.toLowerCase() === 'false';
+        if (isBoolean) {
+            filter.status = val.toLowerCase() === 'true';
+        } else {
+            filter.category = val;
+        }
+    });
+} else if (query) {
     const isBoolean = query.toLowerCase() === 'true' || query.toLowerCase() === 'false';
 
     if (isBoolean) {
-      filter = { status: query.toLowerCase() === 'true' };
+        filter.status = query.toLowerCase() === 'true';
     } else {
-      filter = { category: query };
+        filter.category = query;
     }
-  }
-
+}
   const options = {
     limit: parseInt(limit),
     page: parseInt(page),
