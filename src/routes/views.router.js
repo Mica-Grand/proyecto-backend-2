@@ -12,13 +12,25 @@ const router = express.Router();
 router.get('/realtimeproducts', async (req, res) => {
     try {
 
-        let result = await productModel.find();
-       
+        let products = await productModel.find();      
+        products = products.map(product => ({
+            _id: product._id,
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            thumbnails: product.thumbnails,
+            code: product.code,
+            stock: product.stock,
+            category: product.category,
+            status: product.status
+        }));
+        console.log(products) 
         res.render('realTimeProducts',  {
-            products: result.docs,
+            products: products,
             title: 'Real time products',
             useWS: true,
-            scripts: ['realtime.js'],
+            scripts: ['realtime.js']
+    
         });
     } catch (error) {
         console.error("We can't show the products right now", error);
@@ -61,6 +73,9 @@ router.get('/products', async (req, res) => {
         result.prevLink = result.hasPrevPage ? buildQueryString(result.prevPage) : null;
         result.nextLink = result.hasNextPage ? buildQueryString(result.nextPage) : null;
 
+        const hasProducts = result.docs.length > 0;
+
+
         res.render('index', {
             title: 'Products',
             products: result.docs,
@@ -74,6 +89,7 @@ router.get('/products', async (req, res) => {
             prevLink: result.prevLink,
             nextLink: result.nextLink,
             isValid: !(page <= 0 || page > result.totalPages),
+            hasProducts,
             scripts: ['index.js']
         });
     } catch (error) {

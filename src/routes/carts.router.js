@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import cartModel from '../models/cart.model.js';
 import productModel from '../models/product.model.js'
+import mongoose from 'mongoose';
 
 const router = Router();
 
@@ -25,11 +26,10 @@ router.post('/:cid/products/:pid', async (req, res) => {
   quantity = (quantity !== undefined && !isNaN(parseInt(quantity)) && parseInt(quantity) > 0) 
   ? parseInt(quantity) 
   : 1;
- /* quantity = parseInt(quantity);
-  if (isNaN(quantity)) {
-    return res.status(400).send({ result: "error", message: "Invalid quantity" });
-  }*/
   try {
+    if (!mongoose.Types.ObjectId.isValid(pid)) {
+      return res.status(400).send({ result: "error", message: "Invalid product ID. Please provide a valid ID." });
+    }
     let cart = await cartModel.findById(cid);
     if (!cart) {
       return res.status(404).send({ result: "error", message: "Cart not found" });
@@ -54,7 +54,13 @@ router.post('/:cid/products/:pid', async (req, res) => {
 router.get('/:cid', async (req, res) => {
   const { cid } = req.params;
   try {
+    if (!mongoose.Types.ObjectId.isValid(cid)) {
+      return res.status(400).send({ result: "error", message: "Invalid cart ID. Please provide a valid ID." });
+    }
     let cart = await cartModel.findOne({ _id: cid }).populate('products.productId').lean();
+    if (!cart) {
+      return res.status(404).json({ error: "cart not found" });
+    }
     res.send({ result: "success", payload: cart });
   } catch (error) {
     console.error('Error while fetching a cart:', error);
@@ -67,7 +73,17 @@ router.get('/:cid', async (req, res) => {
 router.put('/:cid/products/:pid', async (req, res) => {
   const { cid, pid } = req.params;
   const { quantity } = req.body;
+
   try {
+    if (!mongoose.Types.ObjectId.isValid(pid)) {
+      return res.status(400).send({ result: "error", message: "Invalid product ID. Please provide a valid ID." });
+    }
+
+    let cart = await cartModel.findOne({ _id: cid, 'products.productId': pid });
+    if (!cart) {
+      return res.status(404).send({ result: "error", message: "Product not found in cart." });
+    }
+
     let result = await cartModel.updateOne(
       { _id: cid, 'products.productId': pid },
       { $set: { 'products.$.quantity': quantity } }
@@ -118,7 +134,16 @@ router.put('/:cid', async (req, res) => {
 router.delete('/:cid/products/:pid', async (req, res) => {
   const { cid, pid } = req.params;
   try {
+    if (!mongoose.Types.ObjectId.isValid(pid)) {
+      return res.status(400).send({ result: "error", message: "Invalid product ID. Please provide a valid ID." });
+    }
+    if (!mongoose.Types.ObjectId.isValid(cid)) {
+      return res.status(400).send({ result: "error", message: "Invalid cart ID. Please provide a valid ID." });
+    }
     const cart = await cartModel.findById(cid);
+    if (!cart) {
+      return res.status(404).send({ result: "error", message: "Cart not found." });
+    }
     cart.products = cart.products.filter(item => item.productId.toString() !== pid);
     
     await cart.save();
@@ -132,8 +157,16 @@ router.delete('/:cid/products/:pid', async (req, res) => {
 router.delete('/:cid', async (req, res) => {
   const { cid } = req.params;
   try {
-    let result = await cartModel.updateOne({ _id: cid }, { $set: { products: [] } });
-    res.send({ result: "success", payload: result });
+    if (!mongoose.Types.ObjectId.isValid(cid)) {
+      return res.status(400).send({ result: "error", message: "Invalid cart ID. Please provide a valid ID." });
+    }
+    const cart = await cartModel.findById(cid);
+    if (!cart) {
+      return res.status(404).send({ result: "error", message: "Cart not found." });
+    }
+    cart.products = [];
+    await cart.save();
+    res.send({ result: "success", payload: cart });
   } catch (error) {
     console.error('Error while emptying the cart:', error);
     res.status(500).send({ result: "error", payload: error });

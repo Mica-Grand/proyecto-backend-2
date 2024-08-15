@@ -53,32 +53,32 @@ socketServer.on('connection', socket => {
     socket.on('addProduct', async (productData) => {
         try {
             if (!productData.thumbnails) {
-                productData.thumbnails = "https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg";
+                productData.thumbnails = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtDExrwaB9Stm_zfRr3TXXpp5njpBzpxeckw&s.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg";
             }
-            //agrego producto usando productManager
 
-            const succesfullyAdded = await productModel.create(title, description, code, price, stock, category, thumbnails, status);
-            if (succesfullyAdded) {
-                console.log('Producto newProductAdded:', productData)
-                const updatedProductList = await productManager.getProducts();
+            //agrego producto usando productmodel
+
+            const socketAdded = await productModel.create(productData);
+            if (socketAdded) {
+                console.log('Producto nuevo agregado:', productData);
+                
                 //emito el evento  con la lista actualizada
-
+                const updatedProductList = await productModel.find({}); 
                 socketServer.emit('productListUpdated', updatedProductList);
-            }
+                
+      }
         } catch (error) {
             console.error('Error while adding the product:', error)
         }
     });
 
-    //escucho el evento que pide eliminar producto y lo elimino usando productManager
+    //escucho el evento que pide eliminar producto y lo elimino usando productmodel
     socket.on('deleteProduct', async (productId) => {
         try {
             console.log('Intentando eliminar producto con ID:', productId); 
-            const succesfullyDeleted = await productManager.deleteProduct(parseInt(productId));
-            console.log(succesfullyDeleted)
-            if (succesfullyDeleted) {
-                console.log('Producto eliminado:', productId)
-                socketServer.emit('productDeleted', productId)
+            const successfullyDeleted = await productModel.deleteOne({ _id: productId });
+            if (successfullyDeleted.deletedCount > 0) {
+                socketServer.emit('productDeleted', productId);
             }
         } catch (error) {
             console.error('Error while deleting the product:', error)

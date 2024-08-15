@@ -1,5 +1,7 @@
 import {Router} from 'express';
+import mongoose from'mongoose'
 import productModel from '../models/product.model.js';
+import cartModel from '../models/cart.model.js'
 
 const router = Router();
 
@@ -102,9 +104,22 @@ router.put("/:pid", async (req, res) => {
 
 
 router.delete('/:pid', async (req, res) => {
+  const productId = req.params.pid;
+
   try {
-      const productId = req.params.pid;
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ error: 'Invalid product ID' });
+    }
       let result = await productModel.deleteOne({_id:productId});
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+
+      //para eliminar el producto de los carritos que lo tengan y no quede ese error de producto fantasma con id null
+      await cartModel.updateMany(
+        { 'products.productId': productId },
+        { $pull: { products: { productId: productId } } }
+      );
       res.send({result: "success", payload: result});
   } catch (error) {
       console.error('Error while deleting the product', error);
@@ -115,10 +130,13 @@ router.delete('/:pid', async (req, res) => {
 router.get("/:pid", async (req, res) => {
   try {
     const productId = req.params.pid;
-    if (!productId) {
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({ error: "Invalid product ID. Enter a valid ID" });
     }
     let result = await productModel.findOne({_id:productId});
+    if (!result) {
+      return res.status(404).json({ error: "Product not found" });
+    }
     res.send({result: "success", payload: result});
     } catch (error) {
       console.error('Error while fetching the product', error);
