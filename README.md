@@ -24,6 +24,7 @@ Esta app es el proyecto del curso de Backend I de Coderhouse. En esta ocasión s
   - Eliminar productos de los carritos.
   - Vistas:
    Cuenta con vistas desarrolladas con handlebars. Las mismas permiten navegar hacia el catálogo de products y vista de cart. 
+   La vista de products incluye funcionalidades de filtrado, ordenamiento y paginación para la visualización de productos del catálogo. 
   <p style="color:red;">IMPORTANTE: Por el momento la id del cart al que se agregan los products está hardcodeada, hasta tanto se implemente sessions y users.</p> 
    Se conserva la vista de Realtimeproducts de la entrega anterior, que mediante Socket.IO, permite al usuario agregar y quitar productos del catálogo de productos y ver cómo el catálogo se actualiza en tiempo real.
 
@@ -220,7 +221,7 @@ Si no se pasa nada por body, la quantity será 1 por default.
 - Muestra una lista de todos los productos disponibles.
   Cuenta con un botón de agregar al carrito, que agrega 1 unidad del producto.
   Por el momento no se implementó la vista de los detalles de cada producto.
-- Mediante un form con opciones desplegables para seleccionar, permite filtrar por category,  status (true o false), ordenar por precio asc o desc y elegir cuantros resultados mostrar por página:
+- Mediante un form con opciones desplegables para seleccionar, permite filtrar por category,  status (true o false), ordenar por precio asc o desc y elegir cuantros resultados mostrar por página. IMPORTANTE: LOS FILTROS NO TIENEN "PERSISTENCIA" CUANDO SE HACE CLICK EN APPLY FILTERS, NAVEGA HACIA LA URL DEFINIDA MEDIANTE QUERY PARAMS, Y SI SE HACE UNA MODIFICACIÓN EN UN FILTRO, LA URL SE GENERA DE CERO.
   - Filtro category, debe seleccionar nombre de categoría, por ejemplo, makeup, y hacer click en el botón "apply filters". Esto genera esta url:
     URL:`http://localhost:8080/products?category=makeup&limit=10`
   - Filtro availability, debe seleccionar "in stock" (true) o "out of stock" (false), filtrando de acuerdo a la propiedad "status" del producto.Esto genera esta url:
