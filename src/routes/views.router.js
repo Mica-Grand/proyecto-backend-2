@@ -136,12 +136,16 @@ router.get('/cart', passportCall('jwt'), async (req, res) => {
 
   
 router.get('/login', isNotAuthenticated, (req, res) => {
-    res.render('login');
+    res.render('login', {
+        title: 'Login',
+       });
 });
 
 router.get('/register', isNotAuthenticated, (req, res) => {
-    res.render('register');
+    res.render('register', {
+        title: 'Register',
 });
+})
 
 router.get('/profile', passportCall('jwt'), async (req, res) => {
     try {

@@ -1,12 +1,16 @@
-<h2>{{title}}</h2>
-
-<div class="container d-flex flex-column" style="min-height: 60vh">
-    <p>Nombre: {{user.first_name}}</p>
-    <p>Apellido: {{user.last_name}}</p>
-    <p>Email: {{user.email}}</p>
-    <p>Edad: {{user.age}}</p>
-    {{user.cart}}
-    <form action="/api/sessions/logout" method="POST">
-        <button type="submit">Cerrar Sesión</button>
-    </form>
+<div class="container" style="min-height: 65vh">
+    <div class="row">
+        <h2 class="my-4">{{title}}</h2>
+    </div>
+    <div>
+        <p><strong>Nombre:</strong> {{user.first_name}}</p>
+        <p><strong>Apellido:</strong> {{user.last_name}}</p>
+        <p><strong>Email:</strong> {{user.email}}</p>
+        <p><strong>Edad:</strong> {{user.age}}</p>
+    </div>
+    <div>
+        <form action="/api/sessions/logout" method="POST">
+            <button class="btn btn-danger" type="submit">Cerrar Sesión</button>
+        </form>
+    </div>
 </div>
