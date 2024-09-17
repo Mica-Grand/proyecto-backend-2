@@ -1,22 +1,42 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const addToCartButtons = document.querySelectorAll(".add-to-cart-button");
 
   addToCartButtons.forEach((button) => {
     button.addEventListener("click", async (event) => {
       const productId = event.target.dataset.pid;
-      const cartId = "66affd4bc723a31ad3519e85";
+
       try {
-        const response = await fetch(
-          `/api/carts/${cartId}/products/${productId}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({}),
-          }
-        );
+        // Obtener cartId del usuario actual
+        const currentUserResponse = await fetch('/api/sessions/current', {
+          method: 'GET',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: 'include'  
+        });
+
+        if (!currentUserResponse.ok) {
+          throw new Error('Error al obtener la sesión del usuario.');
+        }
+
+        const { cartId } = await currentUserResponse.json();
+
+        if (!cartId) {
+          throw new Error('No se pudo obtener el cartId');
+        }
+
+        // Agregar producto al carrito
+        const response = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}),
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al agregar el producto al carrito.');
+        }
 
         const result = await response.json();
 
@@ -28,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
             confirmButtonText: "OK",
           });
         } else {
-          throw new Error(result.message);
+          throw new Error(result.message || 'No se pudo agregar el producto.');
         }
       } catch (error) {
         Swal.fire({

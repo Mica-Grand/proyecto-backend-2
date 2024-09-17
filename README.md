@@ -62,31 +62,31 @@ npm start
 **GET:**
 
 - **Obtener todos los productos:**
-  - URL: `http://localhost:8080/api/products`
+  - URL: `http://localhost:3000/api/products`
 
 - **Filtros opcionales, a solicitar mediante query:**
     -Page (si no se proporciona un valor, se otorga la page 1).
-     URL: `http://localhost:8080/api/products?page=2`
+     URL: `http://localhost:3000/api/products?page=2`
     - Limit (si no se proporciona, por default es 10):
-     URL:`http://localhost:8080/api/products?limit=4`
+     URL:`http://localhost:3000/api/products?limit=4`
     - Sort. Opciones: asc y desc
-     URL `http://localhost:8080/api/products?sort=asc`
+     URL `http://localhost:3000/api/products?sort=asc`
     - Filter category, debe recibir nombre de categoría, por ejemplo, haircare.
-    URL:`http://localhost:8080/api/products?category=haircare`
+    URL:`http://localhost:3000/api/products?category=haircare`
     - Filter status, recibe true o false que se convierte a boolean y filtra de acuerdo a la propiedad "status" del producto.
-    URL:`http://localhost:8080/api/products?status=false`
+    URL:`http://localhost:3000/api/products?status=false`
     - Múltiples params:
-    URL: `http://localhost:8080/api/products?sort=asc&status=true&page=2&limit=4`
-     URL: `http://localhost:8080/api/products?limit=5&category=makeup&status=true&sort=asc&page=2`
+    URL: `http://localhost:3000/api/products?sort=asc&status=true&page=2&limit=4`
+     URL: `http://localhost:3000/api/products?limit=5&category=makeup&status=true&sort=asc&page=2`
 
 - **Obtener un producto por su ID:**
-  - URL: `http://localhost:8080/api/products/:pid`
-  - Ejemplo: `http://localhost:8080/api/products/66b41580fddd12e794da120b`
+  - URL: `http://localhost:3000/api/products/:pid`
+  - Ejemplo: `http://localhost:3000/api/products/66b41580fddd12e794da120b`
 
 **POST:**
 
 - **Crear un nuevo producto:**
-  - URL: `http://localhost:8080/api/products`
+  - URL: `http://localhost:3000/api/products`
   - Ejemplo de Body (JSON):
     
 ```json
@@ -110,9 +110,9 @@ npm start
 **PUT:**
 
 - **Actualizar un producto por su ID:**
-  - URL: `http://localhost:8080/api/products/:pid`
+  - URL: `http://localhost:3000/api/products/:pid`
   - Body (JSON) con campos permitidos: `stock`, `description`, `price`, `category`, `thumbnails`,  `title`, `code`, `status`.
-  - Ejemplo: `http://localhost:8080/api/products/66affabf15462968a221eddd`
+  - Ejemplo: `http://localhost:3000/api/products/66affabf15462968a221eddd`
     ```json
     {
   
@@ -123,22 +123,22 @@ npm start
 **DELETE:**
 
 - **Eliminar un producto por su ID:**
-  - URL: `http://localhost:8080/api/products/:pid`
-  - Ejemplo: `http://localhost:8080/api/products/66affabf15462968a221eddd`
+  - URL: `http://localhost:3000/api/products/:pid`
+  - Ejemplo: `http://localhost:3000/api/products/66affabf15462968a221eddd`
 
 ### CARTS
 
 **GET:**
 
 - **Obtener un carrito por su ID:**
-  - URL: `http://localhost:8080/api/carts/:cid`
-  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85`
+  - URL: `http://localhost:3000/api/carts/:cid`
+  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85`
   - Lista todos los productos contenidos en el carrito especificado y realiza populate para traer las propiedades de cada producto.
 
 **POST:**
 
 - **Crear un nuevo carrito vacío:**
-  - URL: `http://localhost:8080/api/carts`
+  - URL: `http://localhost:3000/api/carts`
   - Crea un carrito nuevo con una estructura inicial vacía. El result es:
   ```json
   {
@@ -154,8 +154,8 @@ npm start
 **POST (Agregar producto al carrito):**
 
 - **Agregar un producto al carrito por IDs:**
-  - URL: `http://localhost:8080/api/carts/:cid/products/:pid`
-  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85/products/66b415a9b0607ca7f1a4e9db`
+  - URL: `http://localhost:3000/api/carts/:cid/products/:pid`
+  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85/products/66b415a9b0607ca7f1a4e9db`
   - La quantity se puede pasar por body:
   ```json
   {
@@ -167,15 +167,15 @@ Si no se pasa nada por body, la quantity será 1 por default.
 **GET:**
 
 - **Obtener un carrito por su ID:**
-  - URL: `http://localhost:8080/api/carts/:cid`
-  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85`
+  - URL: `http://localhost:3000/api/carts/:cid`
+  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85`
   - Lista todos los productos contenidos en el carrito especificado y realiza populate para traer las propiedades de cada producto.
 
 **PUT:**
 
 - **actualizar la cantidad de un producto determinado:**
-  - URL: `http://localhost:8080/carts/:cid/products/:pid`
-  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85/products/66affad715462968a221eddf`
+  - URL: `http://localhost:3000/carts/:cid/products/:pid`
+  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85/products/66affad715462968a221eddf`
   - Actualiza la cantidad de un producto determinado que ya se encuentra en el carrito.
   La quantity se debe pasar por BODY:
     ```json
@@ -185,8 +185,8 @@ Si no se pasa nada por body, la quantity será 1 por default.
     ```
   
 - **actualizar el carrito con un arreglo de productos:**
-  - URL: `http://localhost:8080/api/carts/:cid`
-  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85`
+  - URL: `http://localhost:3000/api/carts/:cid`
+  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85`
   - Actualiza el carrito con un arreglo de productos.
   El array de products se envía por body. La solicitud debe tener este formato:
   
@@ -203,13 +203,13 @@ Si no se pasa nada por body, la quantity será 1 por default.
 **DELETE:**
 
 - **Elimina producto seleccionado del carrito:**
-  - URL: `http://localhost:8080/api/carts/:cid/products/:pid`
-  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85/products/66b415a9b0607ca7f1a4e9db`
+  - URL: `http://localhost:3000/api/carts/:cid/products/:pid`
+  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85/products/66b415a9b0607ca7f1a4e9db`
   - Elimina del cart pasado por param el producto pasado por param.
 
 - **Vacía el cart del id seleccionado:**
-  - URL: `http://localhost:8080/api/carts/:cid`
-  - Ejemplo: `http://localhost:8080/api/carts/66affd4bc723a31ad3519e85`
+  - URL: `http://localhost:3000/api/carts/:cid`
+  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85`
   - Vacía el cart especificado con id por params, en este caso, 66affd4bc723a31ad3519e85
 
 ## Vistas
@@ -217,28 +217,28 @@ Si no se pasa nada por body, la quantity será 1 por default.
 ### PRODUCTS
 
 - **Navegar a la lista de productos (catálogo):**
-- URL: `http://localhost:8080/products`
+- URL: `http://localhost:3000/products`
 - Muestra una lista de todos los productos disponibles.
   Cuenta con un botón de agregar al carrito, que agrega 1 unidad del producto.
   Por el momento no se implementó la vista de los detalles de cada producto.
 - Mediante un form con opciones desplegables para seleccionar, permite filtrar por category,  status (true o false), ordenar por precio asc o desc y elegir cuantros resultados mostrar por página. IMPORTANTE: LOS FILTROS NO TIENEN "PERSISTENCIA" CUANDO SE HACE CLICK EN APPLY FILTERS, NAVEGA HACIA LA URL DEFINIDA MEDIANTE QUERY PARAMS, Y SI SE HACE UNA MODIFICACIÓN EN UN FILTRO, LA URL SE GENERA DE CERO.
   - Filtro category, debe seleccionar nombre de categoría, por ejemplo, makeup, y hacer click en el botón "apply filters". Esto genera esta url:
-    URL:`http://localhost:8080/products?category=makeup&limit=10`
+    URL:`http://localhost:3000/products?category=makeup&limit=10`
   - Filtro availability, debe seleccionar "in stock" (true) o "out of stock" (false), filtrando de acuerdo a la propiedad "status" del producto.Esto genera esta url:
-    URL:`http://localhost:8080/products?status=true&limit=10`
+    URL:`http://localhost:3000/products?status=true&limit=10`
   - Sort by: Debe seleccionar Default (sin orden), Price: low to high (asc) o Price: High to low (desc). Esto genera esta url:
-    URL:`http://localhost:8080/products?sort=asc&limit=10`
+    URL:`http://localhost:3000/products?sort=asc&limit=10`
   - Show, para hacer un limit en la cantidad de items por página (por default es 10). Se puede seleccionar del menú "5" o "20", o cambiarlo en la url.
-    URL:`http://localhost:8080/products?limit=5`
+    URL:`http://localhost:3000/products?limit=5`
   - Page: No se creó botón para seleccionar, pero puede cambiarse en la url. Si no se proporciona, por default  es 1.
-    URL:`http://localhost:8080/products?page=3`
+    URL:`http://localhost:3000/products?page=3`
   - Aplicando múltiples query params. Por ejemplo, aplicamos category=makeup, status=true, sort=desc, limit=5, page=2
-    URL: `http://localhost:8080/products?page=2&category=makeup&status=true&sort=desc&limit=5`
+    URL: `http://localhost:3000/products?page=2&category=makeup&status=true&sort=desc&limit=5`
 
 ### CART
 
 - **Visualizar el cart con los productos agregados**
-- URL: `http://localhost:8080/cart/66affd4bc723a31ad3519e85`
+- URL: `http://localhost:3000/cart/66affd4bc723a31ad3519e85`
 Por el momento, el cart al que se agregan los productos mediante el botón está harcodeado con el carrito con id 66affd4bc723a31ad3519e85
 hasta tanto se implemente users y sessions.
 En esta vista se pueden ver los productos agregados y eliminarlos del carrito mediante un botón.

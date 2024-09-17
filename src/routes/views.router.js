@@ -3,6 +3,11 @@
 import express from 'express';
 import productModel from '../models/product.model.js';
 import cartModel from '../models/cart.model.js';
+import { isAuthenticated, isNotAuthenticated } from '../middlewares/auth.js';
+import { passportCall } from '../utils/utils.js';
+import jwt from 'jsonwebtoken';
+
+
 
 
 
@@ -99,11 +104,15 @@ router.get('/products', async (req, res) => {
 });
 
 
-router.get('/cart/:cid', async (req, res) => {
-    const { cid } = req.params;
-    //por el momento estoy haciendo pruebas con cart id: 66affd4bc723a31ad3519e85 hardcodeado en la lógica del botón de agregar al carrito
+router.get('/cart', passportCall('jwt'), async (req, res) => {
     try {
-        let result = await cartModel.findOne({_id:cid}).populate('products.productId').lean();
+        let user = req.user
+        if (user.toObject) {
+            user = user.toObject();
+        }
+        let cartId  = user.cart;
+        console.log(cartId)
+        let result = await cartModel.findOne({_id:cartId}).populate('products.productId').lean();
         if (!result) {
             return res.status(404).json({ error: 'Cart not found' });
         }
@@ -114,7 +123,8 @@ router.get('/cart/:cid', async (req, res) => {
             title: 'Cart',
             cart: result.products,
             emptyCart,
-            scripts: ['cart.js']
+            scripts: ['cart.js'],
+            cartId 
         });
     } catch (error) {
         console.error('Error getting cart by ID:', error);
@@ -125,6 +135,31 @@ router.get('/cart/:cid', async (req, res) => {
 
 
   
+router.get('/login', isNotAuthenticated, (req, res) => {
+    res.render('login');
+});
+
+router.get('/register', isNotAuthenticated, (req, res) => {
+    res.render('register');
+});
+
+router.get('/profile', passportCall('jwt'), async (req, res) => {
+    try {
+        let user = req.user; 
+        if (user.toObject) {
+            user = user.toObject();
+        }
+        if (!user) {
+            return res.status(401).json({ message: 'Unauthorized. Please login' });
+        }
+        res.render('profile', { 
+            user,
+            title: 'Profile',
+         });
+    } catch (error) {
+        res.status(500).send({ error: 'Error al obtener el perfil' });
+    }
+});
 
 
 
