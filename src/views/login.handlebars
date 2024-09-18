@@ -3,7 +3,7 @@
         <h2 class="my-4">{{title}}</h2>
     </div>
     <div class="row">
-        <form action="/api/sessions/login" method="POST">
+        <form id="login-form">
             <div class="mb-3">
                 <label for="email" class="form-label">Email:</label>
                 <input type="email" class="form-control" name="email" id="email" required>
@@ -11,12 +11,11 @@
             <div class="mb-3">
                 <label for="password" class="form-label">Password:</label>
                 <input type="password" class="form-control" name="password" id="password" required>
-            {{#if errorMessage}}
-            <div class="row my-4 text-danger">
-                <p style="color: red;">{{errorMessage}}</p>
             </div>
-            {{/if}}
-            </div>
+
+            <!-- el Mnesaje  aparece si hay error -->
+            <div id="error-message" class="row my-4 text-danger"></div>
+
             <button class="btn btn-primary" type="submit">Log in</button>
         </form>
     </div>
@@ -24,3 +23,4 @@
         <a href="/register">Register</a>
     </div>
 </div>
+

@@ -103,19 +103,19 @@ router.get('/cart', passportCall('jwt'), async (req, res) => {
    
   })
 
-
   
 router.get('/login', isNotAuthenticated, (req, res) => {
 
     res.render('login', {
         title: 'Login',
-        errorMessage: req.query.errorMessage || ''
+        scripts: ['login.js'],
        });
 });
 
 router.get('/register', isNotAuthenticated, (req, res) => {
     res.render('register', {
         title: 'Register',
+        scripts: ['register.js']
 });
 })
 
@@ -133,6 +133,7 @@ router.get('/profile', passportCall('jwt', { session: false }), async (req, res)
       res.render('profile', {
         user,
         title: 'Profile',
+        scripts: ['profile.js']
       });
     } catch (error) {
       res.status(500).send({ error: 'Error al obtener el perfil' });

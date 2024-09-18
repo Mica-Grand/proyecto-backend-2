@@ -3,14 +3,12 @@
         <h2 class="my-4">{{title}}</h2>
     </div>
     <div>
-        <p><strong>Nombre:</strong> {{user.first_name}}</p>
-        <p><strong>Apellido:</strong> {{user.last_name}}</p>
+        <p><strong>Name:</strong> {{user.first_name}}</p>
+        <p><strong>Lastname:</strong> {{user.last_name}}</p>
         <p><strong>Email:</strong> {{user.email}}</p>
-        <p><strong>Edad:</strong> {{user.age}}</p>
+        <p><strong>Age:</strong> {{user.age}}</p>
     </div>
     <div>
-        <form action="/api/sessions/logout" method="POST">
-            <button class="btn btn-danger" type="submit">Cerrar Sesión</button>
-        </form>
+        <button id="logout-btn" class="btn btn-danger">Log out</button>
     </div>
 </div>

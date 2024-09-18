@@ -13,12 +13,11 @@ const router = Router();
 
 //registro
 router.post('/register', async (req, res) => {
-    const { first_name, last_name, email, age, password } = req.body;
-
     try {
+      const { first_name, last_name, email, age, password } = req.body;
         const userExists = await userModel.findOne({ email });
         if (userExists) {
-            return res.status(400).json({ message: 'This user already exists' });
+            return res.status(400).json({ errorMessage: 'This user already exists. Please, login' });
         }
 
         const newCart = await cartModel.create({ products: [] });  
@@ -40,21 +39,15 @@ router.post('/register', async (req, res) => {
             JWT_SECRET,
             { expiresIn: "1h" }
           );
-
-          console.log(token)
         
           //se guarda el token en la cookie      
           res.cookie("jwt", token, { httpOnly: true, secure: false });
-          res.redirect('/profile')
-            } catch (error) {
+          res.status(200).json({ message: "Register successful" });
+        } catch (error) {
         res.status(500).json({ message: 'server error' });
     }
 });
 
-router.get('/failregister', async (req, res) => {
-    console.log('Estrategia fallida')
-    res.send({ error: "Failed" })
-})
 
 //login
 
@@ -63,9 +56,7 @@ router.post("/login", async (req, res) => {
   try {
     const user = await userModel.findOne({ email });
     if (!user || !isValidPassword(user, password)) {
-      return res.redirect(
-        "/login?errorMessage=Wrong%20credentials%20used%20for%20login."
-      );
+      return res.status(401).json({ errorMessage: "Wrong credentials used for login." });
     }
 
     //generación del token
@@ -75,24 +66,20 @@ router.post("/login", async (req, res) => {
 
     //guardar el jwt en la cookie
     res.cookie("jwt", token, { httpOnly: true, secure: false });
-    res.redirect("/profile");
+    res.status(200).json({ message: "Login successful" });
   } catch (error) {
-    res.status(500).json({ message: "Error en el servidor" });
+    res.status(500).json({ errorMessage: "Server error" });
   }
 });
 
 
-router.get('/faillogin', (req, res) => {
-    res.send("Login fallido")
-})
-
 router.post('/logout', (req, res) => {
     try{
         res.clearCookie('jwt', { httpOnly: true, secure:false });
-        res.redirect('/login');
-        } catch (error) {
-            res.status(500).json({ message: 'Error while logging out)' });
-        }
+        res.status(200).json({ message: "Logout successful" });
+      } catch (error) {
+        res.status(500).json({ errorMessage: "Server error while logging out" });
+      }
 });
 
 router.get('/current', passportCall('jwt'), authorization('user'),(req, res) => {        
