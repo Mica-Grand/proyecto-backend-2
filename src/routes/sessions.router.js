@@ -40,6 +40,8 @@ router.post('/register', async (req, res) => {
             JWT_SECRET,
             { expiresIn: "1h" }
           );
+
+          console.log(token)
         
           //se guarda el token en la cookie      
           res.cookie("jwt", token, { httpOnly: true, secure: false });
