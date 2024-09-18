@@ -106,6 +106,7 @@ router.get('/cart', passportCall('jwt'), async (req, res) => {
 
   
 router.get('/login', isNotAuthenticated, (req, res) => {
+
     res.render('login', {
         title: 'Login',
         errorMessage: req.query.errorMessage || ''

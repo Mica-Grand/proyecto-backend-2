@@ -56,28 +56,27 @@ router.get('/failregister', async (req, res) => {
 
 //login
 
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await userModel.findOne({ email });
-        if (!user|| !isValidPassword(user, password)) {
-           // Si la solicitud es desde un cliente de API, devolver JSON
-           if (req.headers['accept'] && req.headers['accept'].includes('application/json')) {
-            return res.status(401).json({ message: 'Wrong credentials used for login.' });
-        }
-        // Si la solicitud es desde un navegador, redirigir con el mensaje de error
-        return res.redirect('/login?errorMessage=Wrong%20credentials%20used%20for%20login.');
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user || !isValidPassword(user, password)) {
+      return res.redirect(
+        "/login?errorMessage=Wrong%20credentials%20used%20for%20login."
+      );
     }
 
-        //generación del token
-        let token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
+    //generación del token
+    let token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
-        //guardar el jwt en la cookie
-        res.cookie('jwt', token, { httpOnly: true, secure:false });
-        res.redirect('/profile');    
-    } catch (error) {
-        res.status(500).json({ message: 'Error en el servidor' });
-    }
+    //guardar el jwt en la cookie
+    res.cookie("jwt", token, { httpOnly: true, secure: false });
+    res.redirect("/profile");
+  } catch (error) {
+    res.status(500).json({ message: "Error en el servidor" });
+  }
 });
 
 
