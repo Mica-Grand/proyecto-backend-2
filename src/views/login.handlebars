@@ -11,6 +11,11 @@
             <div class="mb-3">
                 <label for="password" class="form-label">Password:</label>
                 <input type="password" class="form-control" name="password" id="password" required>
+            {{#if errorMessage}}
+            <div class="row my-4 text-danger">
+                <p style="color: red;">{{errorMessage}}</p>
+            </div>
+            {{/if}}
             </div>
             <button class="btn btn-primary" type="submit">Log in</button>
         </form>

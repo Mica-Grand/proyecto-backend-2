@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Confirmación antes de eliminar el producto
                 const confirmDelete = await Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: '¿Quieres eliminar este producto del carrito?',
+                    title: 'Are you sure?',
+                    text: 'Do you want to delete this product?',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Sí, eliminar!',
-                    cancelButtonText: 'Cancelar'
+                    confirmButtonText: "Yes, I don't need it!",
+                    cancelButtonText: 'Cancel'
                 });
 
                 if (!confirmDelete.isConfirmed) {
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (!response.ok) {
-                    throw new Error('Error al eliminar el producto del carrito.');
+                    throw new Error('Error while attempting to delete the product from the cart');
                 }
 
                 const result = await response.json();
@@ -57,13 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     event.target.closest('li').remove();
 
                     Swal.fire({
-                        title: 'Producto eliminado!',
-                        text: 'El producto ha sido eliminado del carrito.',
+                        title: 'Product deleted!',
+                        text: 'The product has been deleted from the cart',
                         icon: 'success',
                         confirmButtonText: 'OK'
                     });
                 } else {
-                    throw new Error(result.message || 'No se pudo eliminar el producto.');
+                    throw new Error(result.message || 'The product couldn´t be deleted');
                 }
             } catch (error) {
                 Swal.fire({

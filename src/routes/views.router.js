@@ -8,40 +8,7 @@ import { passportCall } from '../utils/utils.js';
 import jwt from 'jsonwebtoken';
 
 
-
-
-
-
 const router = express.Router();
-
-router.get('/realtimeproducts', async (req, res) => {
-    try {
-
-        let products = await productModel.find();      
-        products = products.map(product => ({
-            _id: product._id,
-            title: product.title,
-            description: product.description,
-            price: product.price,
-            thumbnails: product.thumbnails,
-            code: product.code,
-            stock: product.stock,
-            category: product.category,
-            status: product.status
-        }));
-        console.log(products) 
-        res.render('realTimeProducts',  {
-            products: products,
-            title: 'Real time products',
-            useWS: true,
-            scripts: ['realtime.js']
-    
-        });
-    } catch (error) {
-        console.error("We can't show the products right now", error);
-        res.status(500).send('Error while loading the products');
-    }
-});
 
 router.get('/products', async (req, res) => {
     let { limit, page, sort, category, status } = req.query;
@@ -106,6 +73,9 @@ router.get('/products', async (req, res) => {
 
 router.get('/cart', passportCall('jwt'), async (req, res) => {
     try {
+        if (!req.user) {
+            return res.status(401).render('error401', { message: 'To retrieve a cart or create one you need to log in first', title: "401 Unauthorized" });
+          }
         let user = req.user
         if (user.toObject) {
             user = user.toObject();
@@ -114,7 +84,7 @@ router.get('/cart', passportCall('jwt'), async (req, res) => {
         console.log(cartId)
         let result = await cartModel.findOne({_id:cartId}).populate('products.productId').lean();
         if (!result) {
-            return res.status(404).json({ error: 'Cart not found' });
+            return res.status(404).send({ error: 'Cart not found' });
         }
         let cartLength = result.products.length 
         let emptyCart = cartLength === 0;
@@ -138,6 +108,7 @@ router.get('/cart', passportCall('jwt'), async (req, res) => {
 router.get('/login', isNotAuthenticated, (req, res) => {
     res.render('login', {
         title: 'Login',
+        errorMessage: req.query.errorMessage || ''
        });
 });
 
@@ -147,25 +118,59 @@ router.get('/register', isNotAuthenticated, (req, res) => {
 });
 })
 
-router.get('/profile', passportCall('jwt'), async (req, res) => {
+router.get('/profile', passportCall('jwt', { session: false }), async (req, res) => {
     try {
-        let user = req.user; 
-        if (user.toObject) {
-            user = user.toObject();
-        }
-        if (!user) {
-            return res.status(401).json({ message: 'Unauthorized. Please login' });
-        }
-        res.render('profile', { 
-            user,
-            title: 'Profile',
-         });
+      if (!req.user) {
+        return res.status(401).render('error401', { message: 'Unauthorized. Please log in.', title: "401 Unauthorized" });
+      }
+  
+      let user = req.user;
+      if (user.toObject) {
+        user = user.toObject();
+      }
+  
+      res.render('profile', {
+        user,
+        title: 'Profile',
+      });
     } catch (error) {
-        res.status(500).send({ error: 'Error al obtener el perfil' });
+      res.status(500).send({ error: 'Error al obtener el perfil' });
     }
-});
+  });
+  
+  router.get('/error401', (req, res) => {
+    res.status(401).render('error401', { message: 'Unauthorized. Please log in.', title: "401 Unauthorized" });
+  });
 
+/*Por el momento, saqué el acceso a esta vista desde la navbar
+router.get('/realtimeproducts', async (req, res) => {
+    try {
 
+        let products = await productModel.find();      
+        products = products.map(product => ({
+            _id: product._id,
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            thumbnails: product.thumbnails,
+            code: product.code,
+            stock: product.stock,
+            category: product.category,
+            status: product.status
+        }));
+        console.log(products) 
+        res.render('realTimeProducts',  {
+            products: products,
+            title: 'Real time products',
+            useWS: true,
+            scripts: ['realtime.js']
+    
+        });
+    } catch (error) {
+        console.error("We can't show the products right now", error);
+        res.status(500).send('Error while loading the products');
+    }
+}); */
 
 export default router;
 

@@ -42,13 +42,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (result.result === "success") {
           Swal.fire({
-            title: "Producto agregado!",
-            text: `El producto ha sido agregado al carrito.`,
+            title: "Product added!",
+            text: `The product ahs been added to the cart`,
             icon: "success",
             confirmButtonText: "OK",
           });
         } else {
-          throw new Error(result.message || 'No se pudo agregar el producto.');
+          throw new Error(result.message || 'We couldn´t add the product');
         }
       } catch (error) {
         Swal.fire({

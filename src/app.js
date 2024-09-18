@@ -5,6 +5,7 @@ import handlebars from 'express-handlebars'
 import sessionsRouter from './routes/sessions.router.js'
 import cartsRouter from './routes/carts.router.js';
 import productsRouter from './routes/products.router.js';
+import usersRouter from './routes/users.router.js';
 import __dirname from './utils/utils.js'
 import viewsRouter from './routes/views.router.js';
 import { Server } from 'socket.io';
@@ -37,7 +38,9 @@ app.set('view engine', 'handlebars')
 app.use("/api/carts", cartsRouter);
 app.use("/api/products", productsRouter);
 app.use('/api/sessions', sessionsRouter);
+app.use('/api/users', usersRouter)
 app.use("/", viewsRouter);
+
 
 //http server
 const httpServer = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

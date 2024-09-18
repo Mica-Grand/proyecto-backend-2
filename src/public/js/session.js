@@ -1,1 +1,0 @@
-// Implementar fetch para próxima entrega

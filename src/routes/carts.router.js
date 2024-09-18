@@ -2,6 +2,8 @@ import { Router } from 'express';
 import cartModel from '../models/cart.model.js';
 import productModel from '../models/product.model.js'
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+
 
 const router = Router();
 

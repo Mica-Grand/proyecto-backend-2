@@ -25,14 +25,13 @@ const options = {
     passport.use('jwt', new JWTStrategy(options, async (jwt_payload, done) => {
         try {
             const user = await userService.findById(jwt_payload.id);
-            if (user) {
-                return done(null, user);
-            } else {
-                return done(null, false, { message: 'No user found'});
+            if (!user) {
+                return done(null, false, { message: 'User not found' });
+              }
+              return done(null, user);
+            } catch (error) {
+              return done(error, false);
             }
-        } catch (error) {
-            return done(error, false);
-        }
     }));
 
 }

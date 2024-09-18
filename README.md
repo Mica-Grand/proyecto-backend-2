@@ -1,22 +1,22 @@
 # Proyecto Backend Coderhouse
 
-Esta app es el proyecto del curso de Backend I de Coderhouse. En esta ocasión se encuentra actualizada con los requerimientos de la Preentrega N° 3.
+Esta app es el proyecto del curso de Backend de Coderhouse. En esta ocasión se encuentra actualizada con los requerimientos de la Preentrega N° 1 correspondiente al Bloque II.
 
 ## Información del Proyecto
 
 - ### Nombre:  
-   proyecto-backend-grandoso
+   proyecto-backend-2
 
 - ### Autora:
    Micaela Grandoso
    
 - ### Descripción:
 
-  Es una aplicación desarrollada en Node.js utilizando el framework Express, diseñada para gestionar productos y carritos mediante el uso de persistencia en Mongo Db Atlas. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre productos almacenados en la database y también gestionar carritos de compra.
+  Es una aplicación desarrollada en Node.js utilizando el framework Express, diseñada para gestionar productos y carritos mediante el uso de persistencia en Mongo Db Atlas. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre productos almacenados en la database y también gestionar carritos de compra. En esta última entrega se implementó un CRUD de usuarios y autenticación. 
   
 
 - ### Características:
-  - Eliminar y agregar productos del catálogo y ver la vista en tiempo real.
+  - Eliminar y agregar productos del catálogo y ver la vista en tiempo real. 
   - Crear, obtener, actualizar y eliminar productos del catálogo.
   - Crear carritos de compra.
   - Agregar productos a los carritos existentes.
@@ -25,8 +25,7 @@ Esta app es el proyecto del curso de Backend I de Coderhouse. En esta ocasión s
   - Vistas:
    Cuenta con vistas desarrolladas con handlebars. Las mismas permiten navegar hacia el catálogo de products y vista de cart. 
    La vista de products incluye funcionalidades de filtrado, ordenamiento y paginación para la visualización de productos del catálogo. 
-  <p style="color:red;">IMPORTANTE: Por el momento la id del cart al que se agregan los products está hardcodeada, hasta tanto se implemente sessions y users.</p> 
-   Se conserva la vista de Realtimeproducts de la entrega anterior, que mediante Socket.IO, permite al usuario agregar y quitar productos del catálogo de productos y ver cómo el catálogo se actualiza en tiempo real.
+   La vista de cart permite al usuario agregar productos al carrito y eliminarlos. La misma recupera el cartId del usuario logueado mediante el uso de la estrategia currennt. A su vez, se actualizó la lógica de los botones de agregar productos al carrito y de eliminar productos del mismo, para que los productos se agreguen y se eliminen del cart asociado al usuario autenticado.
 
 - ### Tecnologías utilizadas:
   - Node.js
@@ -38,6 +37,12 @@ Esta app es el proyecto del curso de Backend I de Coderhouse. En esta ocasión s
   - Mongoose.
   - Mongoose-paginate-v2.
   - Bootstrap.
+  - Passport.js.
+  - Passport-jwt
+  - Bcrypt.
+  - Jsonwebtoken.
+  - cokkie-parser
+  - dotenv
 
 
 ## Instalación
@@ -54,8 +59,105 @@ npm start
 
 ```
 
+## Vistas
+
+### CART
+
+- **Visualizar el cart del user que se encuentra logueado**
+- URL: `http://localhost:3000/cart`
+En esta vista se pueden ver los productos agregados y eliminarlos del carrito mediante un botón.
+Si no se encuentra un jwt o el mismo expiró (no se reconoce el user logueado), arroja un error 401 y renderiza una vista para que el usuario pueda registrarse o iniciar sesión.
+
+### PROFILE
+
+- **Visualizar el perfil del user que se encuentra logueado**
+- URL: `http://localhost:3000/profile`
+En esta vista se puede ver el perfil del usuario logueado, incluyendo su información de registro (excepto datos sensibles).
+También cuenta con un botón funcional para cerrar sesión (all cerrar sesión redirige a la vista login)
+Si no se encuentra un jwt o el mismo expiró (no se reconoce el user logueado), arroja un error 401 y renderiza una vista para que el usuario pueda registrarse o iniciar sesión.
+
+### LOGIN
+- **Iniciar sesión en la aplicación**
+- URL: `http://localhost:3000/login`
+En esta vista se puede iniciar sesión con un usuario existente.
+
+### REGISTER
+- **Registrarse en la aplicación**
+- URL: `http://localhost:3000/register`
+En esta vista puede registrarse un nuevo usuario.
+
+
+### PRODUCTS
+
+- **Navegar a la lista de productos (catálogo):**
+- URL: `http://localhost:3000/products`
+- Muestra una lista de todos los productos disponibles.
+  Cuenta con un botón de agregar al carrito, que agrega 1 unidad del producto.
+  Por el momento no se implementó la vista de los detalles de cada producto.
+- Mediante un form con opciones desplegables para seleccionar, permite filtrar por category,  status (true o false), ordenar por precio asc o desc y elegir cuantros resultados mostrar por página. IMPORTANTE: LOS FILTROS NO TIENEN "PERSISTENCIA" CUANDO SE HACE CLICK EN APPLY FILTERS, NAVEGA HACIA LA URL DEFINIDA MEDIANTE QUERY PARAMS, Y SI SE HACE UNA MODIFICACIÓN EN UN FILTRO, LA URL SE GENERA DE CERO.
+  - Filtro category, debe seleccionar nombre de categoría, por ejemplo, makeup, y hacer click en el botón "apply filters". Esto genera esta url:
+    URL:`http://localhost:3000/products?category=makeup&limit=10`
+  - Filtro availability, debe seleccionar "in stock" (true) o "out of stock" (false), filtrando de acuerdo a la propiedad "status" del producto.Esto genera esta url:
+    URL:`http://localhost:3000/products?status=true&limit=10`
+  - Sort by: Debe seleccionar Default (sin orden), Price: low to high (asc) o Price: High to low (desc). Esto genera esta url:
+    URL:`http://localhost:3000/products?sort=asc&limit=10`
+  - Show, para hacer un limit en la cantidad de items por página (por default es 10). Se puede seleccionar del menú "5" o "20", o cambiarlo en la url.
+    URL:`http://localhost:3000/products?limit=5`
+  - Page: No se creó botón para seleccionar, pero puede cambiarse en la url. Si no se proporciona, por default  es 1.
+    URL:`http://localhost:3000/products?page=3`
+  - Aplicando múltiples query params. Por ejemplo, aplicamos category=makeup, status=true, sort=desc, limit=5, page=2
+    URL: `http://localhost:3000/products?page=2&category=makeup&status=true&sort=desc&limit=5`
+- **Los productos pueden agregarse al cart del usuario autenticado.**
+
+
+### REALTIMEPRODUCTS (POR EL MOMENTO DESHABILITADO)
+- **Navegar a la lista de productos en tiempo real (catálogo):**
+- URL: `http://localhost:3000/realtimeproducts`
+- Muestra una lista de todos los productos disponibles en tiempo real.
+- Cuenta con un form para agregar productos al catálogo.
+En un futuro, si se conserva esta función, sólod ebería estar visible para usuarios con rol de admin.
 
 ## Endpoints API 
+
+### USERS
+
+**GET:**
+
+- **Obtener todos los usuarios:**
+- URL: `http://localhost:3000/api/users`
+
+- **Obtener un usuario por id:**
+- URL: `http://localhost:3000/api/users/:uid`
+- Reemplaza `:uid` con el id del usuario que se quiere obtener.
+
+**PUT:**
+- **Actualizar un usuario por id:**
+- URL: `http://localhost:3000/api/users/:uid`
+- Reemplaza `:uid` con el id del usuario que se quiere actualizar.
+- En el cuerpo de la solicitud, se debe enviar el objeto con los datos actualizados.
+
+**DELETE:**
+- **Eliminar un usuario por id:**
+- URL: `http://localhost:3000/api/users/:uid`
+- Reemplaza `:uid` con el id del usuario que se quiere eliminar.
+
+### SESSIONS
+
+**POST:**
+
+- **Login:**
+- URL: `http://localhost:3000/api/sessions/login`
+- En el cuerpo de la solicitud, se debe enviar el objeto con los datos de login (email y password)
+- Si el login es exitoso, se devuelve un token de autenticación.
+
+- **Register:**
+- URL: `http://localhost:3000/api/sessions/register`
+- En el cuerpo de la solicitud, se debe enviar el objeto con los datos del usuario a crear
+- Si el registro es exitoso, se devuelve un token de autenticación.
+
+- **Logout:**
+- URL: `http://localhost:3000/api/sessions/logout`
+
 
 ### PRODUCTS
 
@@ -105,8 +207,6 @@ npm start
 }
 ```
 
-
-
 **PUT:**
 
 - **Actualizar un producto por su ID:**
@@ -127,6 +227,9 @@ npm start
   - Ejemplo: `http://localhost:3000/api/products/66affabf15462968a221eddd`
 
 ### CARTS
+
+Atención: Aún ha sido actualizar para recuperar el cartId del usuario logueado, sigue estando configurado para tomarlo de url params.
+Sin embargo, en la vista de cart sí puede accederse al cart asociado al user que se encuentra logueado, y los botones de agregar y eliminar son funcionales para agregar y eliminar de dicho carrito.
 
 **GET:**
 
@@ -212,36 +315,9 @@ Si no se pasa nada por body, la quantity será 1 por default.
   - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85`
   - Vacía el cart especificado con id por params, en este caso, 66affd4bc723a31ad3519e85
 
-## Vistas
 
-### PRODUCTS
 
-- **Navegar a la lista de productos (catálogo):**
-- URL: `http://localhost:3000/products`
-- Muestra una lista de todos los productos disponibles.
-  Cuenta con un botón de agregar al carrito, que agrega 1 unidad del producto.
-  Por el momento no se implementó la vista de los detalles de cada producto.
-- Mediante un form con opciones desplegables para seleccionar, permite filtrar por category,  status (true o false), ordenar por precio asc o desc y elegir cuantros resultados mostrar por página. IMPORTANTE: LOS FILTROS NO TIENEN "PERSISTENCIA" CUANDO SE HACE CLICK EN APPLY FILTERS, NAVEGA HACIA LA URL DEFINIDA MEDIANTE QUERY PARAMS, Y SI SE HACE UNA MODIFICACIÓN EN UN FILTRO, LA URL SE GENERA DE CERO.
-  - Filtro category, debe seleccionar nombre de categoría, por ejemplo, makeup, y hacer click en el botón "apply filters". Esto genera esta url:
-    URL:`http://localhost:3000/products?category=makeup&limit=10`
-  - Filtro availability, debe seleccionar "in stock" (true) o "out of stock" (false), filtrando de acuerdo a la propiedad "status" del producto.Esto genera esta url:
-    URL:`http://localhost:3000/products?status=true&limit=10`
-  - Sort by: Debe seleccionar Default (sin orden), Price: low to high (asc) o Price: High to low (desc). Esto genera esta url:
-    URL:`http://localhost:3000/products?sort=asc&limit=10`
-  - Show, para hacer un limit en la cantidad de items por página (por default es 10). Se puede seleccionar del menú "5" o "20", o cambiarlo en la url.
-    URL:`http://localhost:3000/products?limit=5`
-  - Page: No se creó botón para seleccionar, pero puede cambiarse en la url. Si no se proporciona, por default  es 1.
-    URL:`http://localhost:3000/products?page=3`
-  - Aplicando múltiples query params. Por ejemplo, aplicamos category=makeup, status=true, sort=desc, limit=5, page=2
-    URL: `http://localhost:3000/products?page=2&category=makeup&status=true&sort=desc&limit=5`
 
-### CART
-
-- **Visualizar el cart con los productos agregados**
-- URL: `http://localhost:3000/cart/66affd4bc723a31ad3519e85`
-Por el momento, el cart al que se agregan los productos mediante el botón está harcodeado con el carrito con id 66affd4bc723a31ad3519e85
-hasta tanto se implemente users y sessions.
-En esta vista se pueden ver los productos agregados y eliminarlos del carrito mediante un botón.
 
 
 ## Capturas de ejemplos de uso con Postman
