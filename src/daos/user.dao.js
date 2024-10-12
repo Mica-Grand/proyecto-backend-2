@@ -1,41 +1,24 @@
 import userModel from '../models/user.model'
 
-class UserDAO {
-    getUsers = async () => {
-        try {
-            let users = await userModel.find()
-            return users
-        } catch (error) {
-            console.log(error)
-            return null
-        }
+export default class UserDAO {
+    
+    async getAllUsers() {
+    return await userModel.find()
     }
 
-    getUserById = async (id) => {
-        try {
-            let user = await userModel.findOne({ _id: id })
-            return user
-        } catch (error) {
-            console.log(error)
-            return null
-        }
+    async getUserById(uid) {
+        return await userModel.findOne({_id:uid})
     }
 
-    saveUser = async (user) => {
-        try {
-            let result = await userModel.create(user)
-            return result
-        } catch (error) {
-            console.log(error)
-        }
+    async updateUserById(uid, updatedFields) {
+        return await userModel.updateOne({_id:uid}, updatedFields)
     }
 
-    updateUser = async (id, user) => {
-        try {
-            let result = await userModel.updateOne({ _id: id }, { $set: user })
-            return result
-        } catch (error) {
-            console.log(error)
-        }
+    async deleteUserById(uid) {
+        return await userModel.deleteOne({_id:uid})
     }
-}
+    }
+
+
+
+

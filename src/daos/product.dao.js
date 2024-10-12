@@ -1,7 +1,7 @@
 import productModel from '../models/product.model';
 
 export default class ProductDAO {
-  async findAll(query) {
+  async getProducts(query) {
       const { limit, page, sort, category, status } = query;
       const filter = {};
       if (category) filter.category = category;
@@ -17,23 +17,23 @@ export default class ProductDAO {
       return await productModel.paginate(filter, options);
   }
 
-  async create(product) {
-      return await productModel.create(product);
+  async createProduct(productData) {
+      return await productModel.create(productData);
   }
 
-  async update(productId, product) {
+  async updateProduct(productId, product) {
       return await productModel.updateOne({ _id: productId }, product);
   }
 
-  async delete(productId) {
+  async deleteProduct(productId) {
       return await productModel.deleteOne({ _id: productId });
   }
 
-  async findById(productId) {
+  async getProductById(productId) {
       return await productModel.findOne({ _id: productId });
   }
 
-  isValidId(productId) {
-    return mongoose.Types.ObjectId.isValid(productId);
+  isValidProductId(productId) {
+    return mongoose.Types.ObjectId.isValid({_id: productId} );
 }
 }

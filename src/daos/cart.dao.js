@@ -8,12 +8,12 @@ export default class CartDAO {
         return await cartModel.create({ products: [] })
     }
 
-    async findCartById(cid) {
-        return await cartModel.findById(cid).populate('products.productId').lean()
+    async getCartById(cid) {
+        return await cartModel.findById({ _id: cid }).populate('products.productId').lean()
     }
 
     async addProductToCart(cid, pid, quantity) {
-        const cart = await cartModel.findById(cid);
+        const cart = await cartModel.findById({_id: cid });
         const productIndex = cart.products.findIndex(p => p.productId.toString() === pid);
         
         if (productIndex > -1) {
@@ -35,27 +35,27 @@ export default class CartDAO {
     }
 
     async updateCart(cid, products) {
-        const cart = await cartModel.findById(cid);
+        const cart = await cartModel.findById({_id: cid });
         cart.products = products;
         await cart.save();
-        return await cartModel.findById(cid).populate('products.productId');
+        return await cartModel.findById({_id: cid }).populate('products.productId');
     }
 
     async deleteProductFromCart(cid, pid) {
-        const cart = await cartModel.findById(cid);
+        const cart = await cartModel.findById({_id: cid });
         cart.products = cart.products.filter(item => item.productId.toString() !== pid);
         await cart.save();
         return cart;
     }
 
     async emptyCart(cid) {
-        const cart = await cartModel.findById(cid);
+        const cart = await cartModel.findById({_id: cid });
         cart.products = [];
         await cart.save();
         return cart;
     }
 
-    isValidId(id) {
-        return mongoose.Types.ObjectId.isValid(id);
+    isValidCartId(cid) {
+        return mongoose.Types.ObjectId.isValid({_id: cid });
     }
 }

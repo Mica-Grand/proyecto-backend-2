@@ -29,7 +29,7 @@ export default class CartsController {
         try {
             const { cid, pid } = req.params;
             const { quantity } = req.body;
-            if (!(await cartService.isValidCartId(cid)) || !(await cartService.isValidCartId(pid))) {
+            if (!(await cartService.isValidCartId(cid)) || !(await cartService.isValidProductId(pid))) {
                 return res.status(400).send({ result: "error", message: "Invalid ID" });
             }
             const result = await cartService.addProductToCart(cid, pid, quantity);
@@ -43,7 +43,7 @@ export default class CartsController {
         try {
             const { cid, pid } = req.params;
             const { quantity } = req.body;
-            if (!(await cartService.isValidCartId(cid)) || !(await cartService.isValidCartId(pid))) {
+            if (!(await cartService.isValidCartId(cid)) || !(await cartService.isValidProductId(pid))) {
                 return res.status(400).send({ result: "error", message: "Invalid ID" });
             }
             const result = await cartService.updateProductQuantity(cid, pid, quantity);
@@ -71,7 +71,7 @@ export default class CartsController {
     async deleteProductFromCart(req, res) {
         try {
             const { cid, pid } = req.params;
-            if (!(await cartService.isValidCartId(cid)) || !(await cartService.isValidCartId(pid))) {
+            if (!(await cartService.isValidCartId(cid)) || !(await cartService.isValidProductId(pid))) {
                 return res.status(400).send({ result: "error", message: "Invalid ID" });
             }
             const result = await cartService.deleteProductFromCart(cid, pid);

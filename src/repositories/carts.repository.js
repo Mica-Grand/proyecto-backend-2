@@ -2,7 +2,7 @@ import CartDAO from "../daos/cart.dao.js";
 import CartDTO from '../dtos/cart.dto.js'
 import ProductDAO from '../daos/product.dao.js'
 
-export default class CartRepository {
+export default class CartsRepository {
     constructor(){
         this.cartDAO = new CartDAO();
         this.productDAO = new ProductDAO();
@@ -12,7 +12,7 @@ export default class CartRepository {
     }
 
     async getCartById(cid) {
-        return await this.cartDAO.findCartById(cid);
+        return await this.cartDAO.getCartById(cid);
     }
 
     async addProductToCart(cid, pid, quantity) {
@@ -24,7 +24,7 @@ export default class CartRepository {
     }
 
     async updateProductQuantity(cid, pid, quantity) {
-        const cart = await this.cartDAO.findCartById(cid);
+        const cart = await this.cartDAO.getCartById(cid);
     if (!cart) {
         throw new Error('Cart not found');
     }
@@ -55,11 +55,11 @@ export default class CartRepository {
         return await this.cartDAO.emptyCart(cid);
     }
 
-    async isValidCartId(id) {
-        return this.cartDAO.isValidId(id);
+    async isValidCartId(cid) {
+        return this.cartDAO.isValidCartId(id);
     }
 
-    async isValidProductId(id) {
-        return this.productDAO.isValidId(id);
+    async isValidProductId(pid) {
+        return this.productDAO.isValidProductId(id);
     }
 }
