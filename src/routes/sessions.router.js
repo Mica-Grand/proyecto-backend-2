@@ -87,12 +87,7 @@ router.get('/current', passportCall('jwt'), authorization('user'),(req, res) => 
   try {
     const user = req.user; 
     const cartId = user.cart; 
-    const userDTO = new UserDTO({
-        id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-    });
+    const userDTO = new UserDTO(user);
     res.json({ user: userDTO, cartId });
 } catch (error) {
     res.status(500).json({ message: 'Error retrieving user' });

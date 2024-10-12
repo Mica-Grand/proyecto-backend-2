@@ -1,9 +1,9 @@
-import ProductsRepository from "../repositories/products.repository";
+import {productService} from '../repositories/index.js'
 
-class ProductsController {
+export default class ProductsController {
     async getProducts(req, res) {
       try {
-        const result = await ProductsRepository.getProducts(req.query);
+        const result = await productService.getProducts(req.query);
         res.send({ result: "success", payload: result });
       } catch (error) {
         console.error("Error while retrieving the list of products: ", error);
@@ -13,7 +13,7 @@ class ProductsController {
   
     async createProduct(req, res) {
       try {
-        const result = await ProductsRepository.createProduct(req.body);
+        const result = await productService.createProduct(req.body);
         res.send({ result: "success", payload: result });
       } catch (error) {
         console.error('Error while creating a new product:', error);
@@ -22,12 +22,12 @@ class ProductsController {
     }
   
     async updateProduct(req, res) {
-      const productId = req.params.pid;
       try {
-        if (!(await ProductsRepository.isValidProductId(productId))) {
+        const productId = req.params.pid;
+        if (!(await productService.isValidProductId(productId))) {
           return res.status(400).json({ error: "Invalid product ID" });
         }
-        const result = await ProductsRepository.updateProduct(productId, req.body);
+        const result = await productService.updateProduct(productId, req.body);
         res.send({ result: "success", payload: result });
       } catch (error) {
         console.error("Error while updating the product:", error);
@@ -36,12 +36,12 @@ class ProductsController {
     }
   
     async deleteProduct(req, res) {
-      const productId = req.params.pid;
       try {
-        if (!(await ProductsRepository.isValidProductId(productId))) {
+        const productId = req.params.pid;
+        if (!(await productService.isValidProductId(productId))) {
           return res.status(400).json({ error: 'Invalid product ID' });
         }
-        await ProductsRepository.deleteProduct(productId);
+        await productService.deleteProduct(productId);
         res.send({ result: "success", payload: { message: "Product deleted successfully" } });
       } catch (error) {
         console.error('Error while deleting the product', error);
@@ -50,12 +50,12 @@ class ProductsController {
     }
   
     async getProductById(req, res) {
-      const productId = req.params.pid;
       try {
-        if (!(await ProductsRepository.isValidProductId(productId))) {
+        const productId = req.params.pid;
+        if (!(await productService.isValidProductId(productId))) {
           return res.status(400).json({ error: "Invalid product ID" });
         }
-        const result = await ProductsRepository.getProductById(productId);
+        const result = await productService.getProductById(productId);
         if (!result) {
           return res.status(404).json({ error: "Product not found" });
         }
@@ -67,4 +67,3 @@ class ProductsController {
     }
   }
   
-  export default new ProductsController();

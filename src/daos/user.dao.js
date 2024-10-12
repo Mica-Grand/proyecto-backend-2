@@ -1,6 +1,6 @@
-import {userModel} from '../models/user.model.js'
+import userModel from '../models/user.model'
 
-export default class User {
+class UserDAO {
     getUsers = async () => {
         try {
             let users = await userModel.find()

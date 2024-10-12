@@ -1,50 +1,34 @@
-import ProductDAO from '../dao/product.dao.js';
-import ProductDTO from '../dto/product.dto.js';
+import ProductDAO from '../daos/product.dao.js';
+import ProductDTO from '../dtos/product.dto.js';
 
-class ProductsRepository {
+export default class ProductsRepository {
+  constructor() {
+    this.productDAO = new ProductDAO();
+    }
+
   async getProducts(query) {
-    const { limit = 10, page = 1, sort, category, status } = query;
-    const filter = {};
-
-    if (category) {
-      filter.category = category;
-    }
-    if (status !== undefined) {
-      filter.status = status === 'true';
-    }
-
-    const options = {
-      limit: parseInt(limit),
-      page: parseInt(page),
-      sort: sort ? { price: sort === 'asc' ? 1 : -1 } : {},
-      lean: true,
-    };
-
-    const { docs, totalDocs, ...rest } = await ProductDAO.getAll(filter, options);
-    const products = docs.map(product => new ProductDTO(product));
-
-    return { products, totalDocs, ...rest };
+    return await this.productDAO.findAll(query);
   }
 
   async createProduct(productData) {
     const productDTO = new ProductDTO(productData);
-    return await ProductDAO.create(productDTO);
-  }
+    return await this.productDAO.create(productDTO);
+}
 
   async updateProduct(productId, updatedFields) {
-    return await ProductDAO.update(productId, updatedFields);
+    const productDTO = new ProductDTO(updatedFields);
+    return await this.productDAO.update(productId, productDTO);
   }
 
   async deleteProduct(productId) {
-    await ProductDAO.delete(productId);
+    await this.productDAO.delete(productId);
   }
 
   async getProductById(productId) {
-    return await ProductDAO.getById(productId);
+    return await this.productDAO.getById(productId);
   }
 
   async isValidProductId(productId) {
-    return await ProductDAO.isValidId(productId);
+    return await this.productDAO.isValidId(productId);
   }
 }
-export default ProductsRepository;
