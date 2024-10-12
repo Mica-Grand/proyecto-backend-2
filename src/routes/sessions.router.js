@@ -5,6 +5,7 @@ import userModel from '../models/user.model.js';
 import cartModel from '../models/cart.model.js'
 import {authorization }  from '../middlewares/auth.js';
 import dotenv from "dotenv";
+import UserDTO from '../dto/user.dto.js'
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -83,13 +84,19 @@ router.post('/logout', (req, res) => {
 });
 
 router.get('/current', passportCall('jwt'), authorization('user'),(req, res) => {        
-    try {
-        const user = req.user; 
-        const cartId = user.cart; 
-        res.json({ user, cartId });
-    } catch (error) {
-        res.status(500).json({ message: 'Error retrieving user' });
-    }
+  try {
+    const user = req.user; 
+    const cartId = user.cart; 
+    const userDTO = new UserDTO({
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+    });
+    res.json({ user: userDTO, cartId });
+} catch (error) {
+    res.status(500).json({ message: 'Error retrieving user' });
+}
 });
 
 export default router;

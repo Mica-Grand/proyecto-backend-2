@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import cartModel from '../models/cart.model.js';
-import productModel from '../models/product.model.js'
+import cartModel from '../dao/models/cart.model.js';
+import productModel from '../dao/models/product.model.js'
+import ticketModel from '../dao/models/ticket.model.js';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
@@ -172,6 +173,34 @@ router.delete('/:cid', async (req, res) => {
   } catch (error) {
     console.error('Error while emptying the cart:', error);
     res.status(500).send({ result: "error", payload: error });
+  }
+});
+
+router.post('/:cid/purchase', async (req, res) => {
+  try {
+    const cartId = req.params.cid;
+    const cart = await cartModel.findById(cartId);
+    const products = cart.products;
+    const ticket = new ticketModel({
+      code: Math.random().toString(36).substr(2, 9),
+      amount: products.reduce((acc, product) => acc + product.price * product.quantity, 0),
+      purchaser: req.user.email,
+    });
+    await ticket.save();
+    const productsToBuy = [];
+    for (const product of products) {
+      const productDoc = await productModel.findById(product.productId);
+      if (productDoc.stock >= product.quantity) {
+        productDoc.stock -= product.quantity;
+        await productDoc.save();
+        productsToBuy.push(product);
+      }
+    }
+    await cartModel.updateOne({ _id: cartId }, { products: productsToBuy });
+    res.json({ message: 'Compra realizada con éxito' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al realizar la compra' });
   }
 });
 
