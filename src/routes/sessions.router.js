@@ -5,7 +5,7 @@ import userModel from '../models/user.model.js';
 import cartModel from '../models/cart.model.js'
 import {authorization }  from '../middlewares/auth.js';
 import dotenv from "dotenv";
-import UserDTO from '../dto/user.dto.js'
+import UserDTO from '../dtos/user.dto.js'
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;

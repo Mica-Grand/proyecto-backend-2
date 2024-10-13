@@ -1,4 +1,4 @@
-import productModel from '../models/product.model';
+import productModel from '../models/product.model.js';
 
 export default class ProductDAO {
   async getProducts(query) {
