@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  const socket = io();
 
-  console.log("Socket.IO client initialized");
 
   Swal.fire({
-    title: "Te damos la bienvenida a Realtimeproducts",
+    title: "Te damos la bienvenida al manejador de productos",
     text: "Usa el formulario para agregar nuevos productos al catálogo. Si quieres remover un producto, haz click en el botón de 'Eliminar'",
   });
 
@@ -18,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const title = formData.get("title");
     const description = formData.get("description");
     const price = formData.get("price");
-    const thumbnails = formData.get("thumbnails");
+    const thumbnails = formData.get("thumbnails") || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtDExrwaB9Stm_zfRr3TXXpp5njpBzpxeckw&s.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg";
     const code = formData.get("code");
     const stock = formData.get("stock");
     const category = formData.get("category");
@@ -33,22 +31,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const productData = { title, description, price, thumbnails, code, stock, category, status };
-    socket.emit("addProduct", productData);
     Swal.fire({
         title: "¡Producto enviado!",
         text: `El producto ${productData.title} ha sido enviado.`,
     });
   });
 
-  // Escucho evento de lista actualizada
-  socket.on("productListUpdated", (updatedProductList) => {
-    console.log('La lista de productos ha sido actualizada:', updatedProductList);
     renderProductList(updatedProductList);
     Swal.fire({
       title: "¡Catálogo actualizado!",
       text: `Se ha agregado un nuevo producto al catálogo:
       ${updatedProductList[updatedProductList.length - 1].title}`,
-  });
   });
 
   const renderProductList = (products) => {
@@ -72,13 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener("click", (event) => {
     if (event.target && event.target.classList.contains("delete-product")) {
       const productId = event.target.getAttribute("data-id");
-      socket.emit("deleteProduct", productId);
     }
   });
 
-  // Escucho evento productDeleted para eliminar el producto de la visata
-  socket.on('productDeleted', (productId) => {
-    console.log('Producto eliminado:', productId);
 
     const productItem = document.querySelector(`li[data-id='${productId}']`);
     if (productItem) {
@@ -89,4 +78,4 @@ document.addEventListener('DOMContentLoaded', () => {
       text: `El producto id ${productId} ha sido eliminado ddel catálogo.`,
   });
   });
-});
+

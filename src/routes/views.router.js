@@ -144,8 +144,7 @@ router.get('/profile', passportCall('jwt', { session: false }), async (req, res)
     res.status(401).render('error401', { message: 'Unauthorized. Please log in.', title: "401 Unauthorized" });
   });
 
-/*Por el momento, saqué el acceso a esta vista desde la navbar
-router.get('/realtimeproducts', async (req, res) => {
+router.get('/manageproducts', async (req, res) => {
     try {
 
         let products = await productModel.find();      
@@ -161,18 +160,17 @@ router.get('/realtimeproducts', async (req, res) => {
             status: product.status
         }));
         console.log(products) 
-        res.render('realTimeProducts',  {
+        res.render('manageProducts',  {
             products: products,
-            title: 'Real time products',
-            useWS: true,
-            scripts: ['realtime.js']
+            title: 'Manage products',
+            scripts: ['manageProducts.js']
     
         });
     } catch (error) {
         console.error("We can't show the products right now", error);
         res.status(500).send('Error while loading the products');
     }
-}); */
+}); 
 
 export default router;
 
