@@ -28,7 +28,5 @@ export default class ProductsRepository {
     return await this.productDAO.getProductById(productId);
   }
 
-  async isValidProductId(productId) {
-    return await this.productDAO.isValidProductId(productId);
-  }
+
 }

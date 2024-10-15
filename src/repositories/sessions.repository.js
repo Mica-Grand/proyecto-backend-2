@@ -57,7 +57,6 @@ export default class SessionsRepository {
   }
   async getCurrentUser(user) {
     const userDTO = new UserDTO(user);
-    const cartId = user.cart;
-    return { user: userDTO, cartId };
+    return { user: userDTO};
   }
 }

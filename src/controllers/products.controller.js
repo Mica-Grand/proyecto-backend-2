@@ -1,4 +1,5 @@
 import {productService} from '../repositories/index.js'
+import mongoose from 'mongoose';
 
 export default class ProductsController {
     async getProducts(req, res) {
@@ -24,7 +25,7 @@ export default class ProductsController {
     async updateProduct(req, res) {
       try {
         const productId = req.params.pid;
-        if (!(await productService.isValidProductId(productId))) {
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
           return res.status(400).json({ error: "Invalid product ID" });
         }
         const result = await productService.updateProduct(productId, req.body);
@@ -38,7 +39,7 @@ export default class ProductsController {
     async deleteProduct(req, res) {
       try {
         const productId = req.params.pid;
-        if (!(await productService.isValidProductId(productId))) {
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
           return res.status(400).json({ error: 'Invalid product ID' });
         }
         await productService.deleteProduct(productId);
@@ -52,7 +53,7 @@ export default class ProductsController {
     async getProductById(req, res) {
       try {
         const productId = req.params.pid;
-        if (!(await productService.isValidProductId(productId))) {
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
           return res.status(400).json({ error: "Invalid product ID" });
         }
         const result = await productService.getProductById(productId);

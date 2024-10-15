@@ -10,7 +10,7 @@ const sessionsController = new SessionsController();
 router.post('/register', sessionsController.register);
 router.post('/login', sessionsController.login);
 router.post('/logout', sessionsController.logout);
-router.get('/current', passportCall('jwt'), authorization('user'), sessionsController.getCurrent);
+router.get('/current', passportCall('jwt'), authorization('user'), sessionsController.getCurrentUser);
 
 
 export default router;

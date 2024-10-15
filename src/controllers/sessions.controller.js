@@ -1,5 +1,4 @@
 import { sessionService } from '../repositories/index.js';
-import UserDTO from '../dtos/user.dto.js';
 
 
 export default class SessionsController {
@@ -35,9 +34,12 @@ export default class SessionsController {
           }
         }
       
-        async getCurrent(req, res) {
+        async getCurrentUser(req, res) {
           try {
-            const { user, cartId } = await sessionService.getCurrentUser(req.user);
+            const user = req.user
+            await sessionService.getCurrentUser(user);
+
+
             res.json({ user, cartId });
           } catch (error) {
             res.status(500).json({ message: 'Error retrieving user' });

@@ -32,12 +32,13 @@ export default class CartsController {
             if (!(await cartService.isValidCartId(cid)) || !(await cartService.isValidProductId(pid))) {
                 return res.status(400).send({ result: "error", message: "Invalid ID" });
             }
-            const result = await cartService.addProductToCart(cid, pid, quantity);
-            res.send({ result: "success", payload: result });
-        } catch (error) {
-            res.status(500).send({ result: "error", payload: error });
+            const updatedCart = await cartService.addProductToCart(cid, pid, quantity || 1);
+            res.status(200).json({ message: 'Product added successfully', cart: updatedCart });
+            } catch (error) {
+                res.status(500).json({ message: error.message });
+            }
         }
-    }
+        
 
     async updateProductQuantity(req, res) {
         try {

@@ -1,4 +1,5 @@
 import productModel from '../models/product.model.js';
+import mongoose from 'mongoose';
 
 export default class ProductDAO {
   async getProducts(query) {
@@ -33,7 +34,5 @@ export default class ProductDAO {
       return await productModel.findOne({ _id: productId });
   }
 
-  isValidProductId(productId) {
-    return mongoose.Types.ObjectId.isValid({_id: productId} );
-}
+
 }

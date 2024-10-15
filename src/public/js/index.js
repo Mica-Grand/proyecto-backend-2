@@ -15,11 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
           credentials: 'include'  
         });
 
-        if (!currentUserResponse.ok) {
-          throw new Error('Error al obtener la sesión del usuario.');
-        }
-
-        const { cartId } = await currentUserResponse.json();
+        const currentUserData = await currentUserResponse.json();
+        const { cartId } = currentUserData;
+        console.log('Cart ID:', cartId);
 
         if (!cartId) {
           throw new Error('No se pudo obtener el cartId');
