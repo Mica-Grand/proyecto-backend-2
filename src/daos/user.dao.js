@@ -1,43 +1,28 @@
-import userModel from '../models/user.model.js'
+import userModel from "../models/user.model.js";
 
 export default class UserDAO {
+  async getAllUsers() {
+    return await userModel.find();
+  }
 
-    async getAllUsers() {
-        try {
-            return await userModel.find();
-        } catch (error) {
-            throw new Error('Error fetching all users: ' + error.message);
-        }
-    }
+  async getUserById(uid) {
+    return await userModel.findOne({ _id: uid });
+  }
 
+  async createUser(userData) {
+    const newUser = new userModel(userData);
+    return await newUser.save();
+  }
 
+  async updateUserById(uid, updatedFields) {
+    return await userModel.updateOne({ _id: uid }, updatedFields);
+  }
 
-    async getUserById(uid) {
-        try {
-        return await userModel.findOne({_id:uid})
-    } catch (error) {
-        throw new Error('Error fetching user: ' + error.message);
-    }
+  async deleteUserById(uid) {
+    return await userModel.deleteOne({ _id: uid });
+  }
+
+  async getUserByEmail(email) {
+    return await userModel.findOne({ email });
+  }
 }
-    
-
-async updateUserById(uid, updatedFields) {
-    try {
-        return await userModel.updateOne({ _id: uid }, updatedFields);
-    } catch (error) {
-        throw new Error('Error updating user: ' + error.message);
-    }
-}
-
-async deleteUserById(uid) {
-    try {
-        return await userModel.deleteOne({ _id: uid });
-    } catch (error) {
-        throw new Error('Error deleting user: ' + error.message);
-    }
-}
-}
-
-
-
-

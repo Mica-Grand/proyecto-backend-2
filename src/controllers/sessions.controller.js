@@ -1,11 +1,13 @@
 import { sessionService } from '../repositories/index.js';
+import UserDTO from '../dtos/user.dto.js';
+
 
 
 export default class SessionsController {
      async register(req, res) {
         try {
-            const { first_name, last_name, email, age, password } = req.body;
-            const token = await sessionService.register({ first_name, last_name, email, age, password });
+            const { first_name, last_name, email, age, password, role} = req.body;
+            const token = await sessionService.register({ first_name, last_name, email, age, password, role });
             res.cookie('jwt', token, { httpOnly: true, secure: false });
             res.status(200).json({ message: 'Register successful' });
           } catch (error) {
@@ -36,15 +38,16 @@ export default class SessionsController {
       
         async getCurrentUser(req, res) {
           try {
-            const user = req.user
-            await sessionService.getCurrentUser(user);
-
-
-            res.json({ user, cartId });
+              const user = req.user; 
+              if (!user) {
+                  return res.status(401).json({ message: 'No user found' });
+              }
+              const userDTO = new UserDTO(user); 
+              res.status(200).json({ user: userDTO, cartId: userDTO.cartId }); 
           } catch (error) {
-            res.status(500).json({ message: 'Error retrieving user' });
+              res.status(500).json({ message: 'Error retrieving user', error: error.message });
           }
-        }
+      }
       }
       
 

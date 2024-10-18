@@ -3,8 +3,7 @@
 import express from 'express';
 import productModel from '../models/product.model.js';
 import cartModel from '../models/cart.model.js';
-import { isAuthenticated, isNotAuthenticated } from '../middlewares/auth.js';
-import { passportCall } from '../utils/utils.js';
+import { isAuthenticated, isNotAuthenticated, passportCall } from '../middlewares/auth.js';
 import jwt from 'jsonwebtoken';
 
 

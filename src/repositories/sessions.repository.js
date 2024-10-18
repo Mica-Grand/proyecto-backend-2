@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { createHash, isValidPassword } from "../utils/utils.js";
 import CartDAO from "../daos/cart.dao.js";
 import UserDAO from "../daos/user.dao.js";
-import UserDTO from "../dtos/user.dto.js";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -14,7 +13,7 @@ export default class SessionsRepository {
     this.cartDAO = new CartDAO();
   }
 
-  async register({ first_name, last_name, email, age, password }) {
+  async register({ first_name, last_name, email, age, password, role }) {
     const userExists = await this.userDAO.getUserByEmail(email);
     if (userExists) {
       throw new Error("This user already exists. Please, login");
@@ -27,6 +26,7 @@ export default class SessionsRepository {
       age,
       password: createHash(password),
       cart: newCart._id,
+      role
     };
 
     const savedUser = await this.userDAO.createUser(newUser);
@@ -55,8 +55,5 @@ export default class SessionsRepository {
   async logout() {
     return true;
   }
-  async getCurrentUser(user) {
-    const userDTO = new UserDTO(user);
-    return { user: userDTO};
-  }
+
 }

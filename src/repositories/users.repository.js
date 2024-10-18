@@ -43,4 +43,6 @@ export default class UsersRepository {
       throw new Error("Error in UsersRepository: " + error.message);
     }
   }
-}
+
+  }
+

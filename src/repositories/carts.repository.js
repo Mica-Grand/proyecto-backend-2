@@ -1,65 +1,95 @@
 import CartDAO from "../daos/cart.dao.js";
-import CartDTO from '../dtos/cart.dto.js'
-import ProductDAO from '../daos/product.dao.js'
+import ProductDAO from "../daos/product.dao.js";
 
 export default class CartsRepository {
-    constructor(){
-        this.cartDAO = new CartDAO();
-        this.productDAO = new ProductDAO();
-    }
-    async createCart() {
-        return await this.cartDAO.createCart();
-    }
+  constructor() {
+    this.cartDAO = new CartDAO();
+    this.productDAO = new ProductDAO();
+  }
 
-    async getCartById(cid) {
-        return await this.cartDAO.getCartById(cid);
+  async isValidCartId(cid) {
+    if (!this.cartDAO.isValidCartId(cid)) {
+        throw new Error('Invalid cart ID');
     }
+}
 
-    async addProductToCart(cid, pid, quantity) {
-        const product = await this.productDAO.findProductById(pid);
-        if (!product) {
-            throw new Error('Product not found');
-        }
-        return await this.cartDAO.addProductToCart(cid, pid, quantity);
-    }
+  async createCart() {
+    return await this.cartDAO.createCart();
+  }
 
-    async updateProductQuantity(cid, pid, quantity) {
-        const cart = await this.cartDAO.getCartById(cid);
-    if (!cart) {
-        throw new Error('Cart not found');
-    }
+  async getCartById(cid) {
+    await this.isValidCartId(cid);
+    const cart = await this.cartDAO.getCartById(cid);
+    if (!cart) throw new Error("Cart not found");
+    return cart;
+  }
 
+  async addProductToCart(cid, pid, quantity) {
+    await this.isValidCartId(cid);
+  
+    const cart = await this.getCartById(cid);
+
+    const productIndex = cart.products.findIndex((p) => {
+        const productIdInCart = p.productId._id || p.productId;  
+        return productIdInCart.toString() === pid.toString();
+      });
+    
+      if (productIndex > -1) {
+        console.log(`Product found. Incrementing quantity by ${quantity}`);
+        cart.products[productIndex].quantity += quantity;
+      } else {
+        console.log(`Product not found. Adding product with quantity: ${quantity}`);
+        cart.products.push({ productId: pid, quantity });
+      }
+    const updatedCart = await this.cartDAO.saveCart(cart);
+    console.log('Cart after update:', updatedCart);
+    return updatedCart;
+  }
+
+  async updateProductQuantity(cid, pid, quantity) {
+    await this.isValidCartId(cid);
+    const cart = await this.getCartById(cid);
     const productInCart = cart.products.find(p => p.productId.toString() === pid);
-    if (!productInCart) {
-        throw new Error('Product not found in cart');
-    }
-        return await this.cartDAO.updateProductQuantity(cid, pid, quantity);
+
+    if (!productInCart) throw new Error('Product not found in the cart');
+
+    productInCart.quantity = quantity;
+    await this.cartDAO.saveCart(cart);
+    return cart;
+}
+
+
+async updateCart(cid, products) {
+    await this.isValidCartId(cid);
+    const productIds = products.map(p => p.productId);
+    const existingProducts = await this.productDAO.findProductsByIds(productIds);
+
+    if (existingProducts.length !== productIds.length) {
+        throw new Error('One or more products not found');
     }
 
-    async updateCart(cid, products) {
-        const productIds = products.map(product => product.productId);
-        const existingProducts = await this.productDAO.findProductsByIds(productIds);
+    const cart = await this.getCartById(cid);
+    cart.products = products;
+    await this.cartDAO.saveCart(cart);
 
-        if (existingProducts.length !== productIds.length) {
-            throw new Error('One or more products not found');
-        }
+    const updatedCart = await this.cartDAO.getCartById(cid);
+    return updatedCart;
+}
 
-        const cartDTO = new CartDTO({ products });
-        return await this.cartDAO.updateCart(cid, cartDTO.products);
-    }
-    async deleteProductFromCart(cid, pid) {
-        return await this.cartDAO.deleteProductFromCart(cid, pid);
-    }
+async deleteProductFromCart(cid, pid) {
+    await this.isValidCartId(cid);
+    const cart = await this.getCartById(cid);
+    cart.products = cart.products.filter(p => p.productId.toString() !== pid);
+    await this.cartDAO.saveCart(cart);
+    return cart;
+}
 
-    async emptyCart(cid) {
-        return await this.cartDAO.emptyCart(cid);
-    }
+async emptyCart(cid) {
+    await this.isValidCartId(cid);
+    const cart = await this.getCartById(cid);
+    cart.products = [];
+    await this.cartDAO.saveCart(cart);
+    return cart;
+}
 
-    async isValidCartId(cid) {
-        return this.cartDAO.isValidCartId(id);
-    }
-
-    async isValidProductId(pid) {
-        return this.productDAO.isValidProductId(id);
-    }
 }
