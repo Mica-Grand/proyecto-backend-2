@@ -77,11 +77,12 @@ async updateCart(cid, products) {
 }
 
 async deleteProductFromCart(cid, pid) {
-    await this.isValidCartId(cid);
-    const cart = await this.getCartById(cid);
-    cart.products = cart.products.filter(p => p.productId.toString() !== pid);
-    await this.cartDAO.saveCart(cart);
-    return cart;
+  await this.isValidCartId(cid);
+  const updatedCart = await this.cartDAO.removeProductFromCart(cid, pid);
+  if (!updatedCart) {
+      throw new Error('Cart not found');
+  }
+  return updatedCart;
 }
 
 async emptyCart(cid) {

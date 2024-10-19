@@ -22,6 +22,14 @@ export default class CartDAO {
         );
     }
 
+    async removeProductFromCart(cid, pid) {
+        return await cartModel.findByIdAndUpdate(
+            cid,
+            { $pull: { products: { productId: pid } } },
+            { new: true }
+        ).populate('products.productId');
+    }
+
     isValidCartId(cid) {
         return mongoose.Types.ObjectId.isValid(cid);  
     }

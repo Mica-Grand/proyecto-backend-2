@@ -113,12 +113,6 @@ export default class CartsController {
   async deleteProductFromCart(req, res) {
     try {
       const { cid, pid } = req.params;
-      if (
-        !(await cartService.isValidCartId(cid)) ||
-        !(await cartService.isValidProductId(pid))
-      ) {
-        return res.status(400).send({ result: "error", message: "Invalid ID" });
-      }
       const cart = await cartService.deleteProductFromCart(cid, pid);
 
       res.status(200).json({
