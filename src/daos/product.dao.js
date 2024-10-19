@@ -34,5 +34,7 @@ export default class ProductDAO {
       return await productModel.findOne({ _id: productId });
   }
 
-
+  isValidProductId(pid) {
+    return mongoose.Types.ObjectId.isValid(pid);  
+}
 }

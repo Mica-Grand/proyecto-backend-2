@@ -16,17 +16,26 @@ export default class ProductsRepository {
 }
 
   async updateProduct(productId, updatedFields) {
+    await this.isValidProductId(productId);
     const productDTO = new ProductDTO(updatedFields);
     return await this.productDAO.updateProduct(productId, productDTO);
   }
 
   async deleteProduct(productId) {
+    await this.isValidProductId(productId);
     await this.productDAO.deleteProduct(productId);
   }
 
   async getProductById(productId) {
+    await this.isValidProductId(productId);
     return await this.productDAO.getProductById(productId);
   }
+
+  async isValidProductId(productId) {
+    if (!this.productDAO.isValidProductId(productId)) {
+        throw new Error('Invalid product ID');
+    }
+}
 
 
 }

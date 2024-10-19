@@ -24,9 +24,9 @@ export const isNotAuthenticated = (req, res, next) => {
 export const authorization = (role) => {
     return async (req, res, next) => {
         if (!req.user)
-            return res.status(401).send({ error: 'Unauthorized' });
+            return res.status(401).send({ error: 'You are not authenticated. Please login' });
         if (req.user.role !== role)
-            return res.status(403).send({ error: 'No permissions' });
+            return res.status(403).send({ error: 'You don´t have permission to access this resource' });
         next();
     }
 }

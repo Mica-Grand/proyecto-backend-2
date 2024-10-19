@@ -13,6 +13,12 @@ export default class CartsRepository {
     }
 }
 
+async isValidProductId(pid) {
+  if (!this.productDAO.isValidProductId(pid)) {
+      throw new Error('Invalid product ID');
+  }
+}
+
   async createCart() {
     return await this.cartDAO.createCart();
   }
@@ -25,7 +31,10 @@ export default class CartsRepository {
   }
 
   async addProductToCart(cid, pid, quantity) {
-    await this.isValidCartId(cid);
+    await Promise.all([
+      this.isValidCartId(cid),
+      this.isValidProductId(pid)
+  ]);
   
     const cart = await this.getCartById(cid);
 
@@ -47,7 +56,10 @@ export default class CartsRepository {
   }
 
   async updateProductQuantity(cid, pid, quantity) {
-    await this.isValidCartId(cid);
+    await Promise.all([
+      this.isValidCartId(cid),
+      this.isValidProductId(pid)
+  ]);
     const cart = await this.getCartById(cid);
     const productInCart = cart.products.find(p => p.productId.toString() === pid);
 
@@ -60,7 +72,10 @@ export default class CartsRepository {
 
 
 async updateCart(cid, products) {
-    await this.isValidCartId(cid);
+  await Promise.all([
+    this.isValidCartId(cid),
+    this.isValidProductId(pid)
+]);
     const productIds = products.map(p => p.productId);
     const existingProducts = await this.productDAO.findProductsByIds(productIds);
 
@@ -77,8 +92,10 @@ async updateCart(cid, products) {
 }
 
 async deleteProductFromCart(cid, pid) {
-  await this.isValidCartId(cid);
-  const updatedCart = await this.cartDAO.removeProductFromCart(cid, pid);
+  await Promise.all([
+    this.isValidCartId(cid),
+    this.isValidProductId(pid)
+]);  const updatedCart = await this.cartDAO.removeProductFromCart(cid, pid);
   if (!updatedCart) {
       throw new Error('Cart not found');
   }

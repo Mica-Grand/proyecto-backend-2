@@ -6,13 +6,13 @@ const router = Router();
 
 const cartsController = new CartsController(); 
 
-router.post('/', cartsController.createCart);  
-router.get('/:cid', cartsController.getCartById);  
-router.post('/:cid/products/:pid', cartsController.addProductToCart); 
-router.put('/:cid/products/:pid', cartsController.updateProductQuantity); 
-router.put('/:cid', cartsController.updateCart); 
-router.delete('/:cid/products/:pid', cartsController.deleteProductFromCart); 
-router.delete('/:cid', cartsController.emptyCart);  
+router.post('/', passportCall('jwt'), authorization('user'), cartsController.createCart);  
+router.get('/:cid', passportCall('jwt'), authorization('user'), cartsController.getCartById);  
+router.post('/:cid/products/:pid', passportCall('jwt'), authorization('user'),  cartsController.addProductToCart); 
+router.put('/:cid/products/:pid', passportCall('jwt'), authorization('user'),  cartsController.updateProductQuantity); 
+router.put('/:cid', passportCall('jwt'), authorization('user'), cartsController.updateCart); 
+router.delete('/:cid/products/:pid', passportCall('jwt'), authorization('user'),  cartsController.deleteProductFromCart); 
+router.delete('/:cid', passportCall('jwt'), authorization('user'), cartsController.emptyCart);  
 
 export default router;
 
