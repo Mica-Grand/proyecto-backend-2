@@ -1,6 +1,7 @@
-# Proyecto Backend Coderhouse
+# Proyecto Backend de E-commerce
 
-Esta app es el proyecto del curso de Backend de Coderhouse. En esta ocasión se encuentra actualizada con los requerimientos de la Preentrega N° 1 correspondiente al Bloque II.
+Este proyecto es una implementación backend para una plataforma de comercio electrónico construida con Node.js, Express y MongoDB. El mismo fue realizado en el marco del curso de Backend de Coderhouse, y cumple los requerimientos de la Entrega Final del tramo II.
+
 
 ## Información del Proyecto
 
@@ -10,28 +11,14 @@ Esta app es el proyecto del curso de Backend de Coderhouse. En esta ocasión se 
 - ### Autora:
    Micaela Grandoso
    
-- ### Descripción:
-
-  Es una aplicación desarrollada en Node.js utilizando el framework Express, diseñada para gestionar productos y carritos mediante el uso de persistencia en Mongo Db Atlas. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre productos almacenados en la database y también gestionar carritos de compra. En esta última entrega se implementó un CRUD de usuarios y autenticación. 
-  
 
 - ### Características:
-  - Eliminar y agregar productos del catálogo y ver la vista en tiempo real. 
-  - Crear, obtener, actualizar y eliminar productos del catálogo.
-  - Crear carritos de compra.
-  - Agregar productos a los carritos existentes.
-  - Obtener el contenido de los carritos.
-  - Eliminar productos de los carritos.
-  - Vistas:
-   Cuenta con vistas desarrolladas con handlebars. Las mismas permiten navegar hacia el catálogo de products y vista de cart. 
-   La vista de products incluye funcionalidades de filtrado, ordenamiento y paginación para la visualización de productos del catálogo. 
-   La vista de cart permite al usuario agregar productos al carrito y eliminarlos. La misma recupera el cartId del usuario logueado mediante el uso de la estrategia currennt. A su vez, se actualizó la lógica de los botones de agregar productos al carrito y de eliminar productos del mismo, para que los productos se agreguen y se eliminen del cart asociado al usuario autenticado.
+  
 
 - ### Tecnologías utilizadas:
   - Node.js
   - Express.js
   - Handlebars.
-  - Socket.IO.
   - Sweet Alert.
   - Persistencia: Mongo Db Atlas.
   - Mongoose.
@@ -41,8 +28,10 @@ Esta app es el proyecto del curso de Backend de Coderhouse. En esta ocasión se 
   - Passport-jwt
   - Bcrypt.
   - Jsonwebtoken.
-  - cokkie-parser
+  - cookie-parser
   - dotenv
+  -uuid
+  - 
 
 
 ## Instalación
