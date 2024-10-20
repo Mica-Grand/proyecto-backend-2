@@ -3,23 +3,29 @@ import passport from 'passport';
 
 // Chequear si el usuario está autenticado con JWT
 export const isAuthenticated = (req, res, next) => {
-    passport.authenticate('jwt', { session: false }, (err, user) => {
-        if (err || !user) {
-            return res.status(401).send({ error: 'Not authorized. Needs to log in' });
+  passport.authenticate('jwt', { session: false }, (err, user) => {
+    if (err || !user) {
+        if (req.headers['content-type'] === 'application/json') {
+            return res.status(401).json({ error: 'Not authorized. Needs to log in' });
         }
-        req.user = user;  
-        next();
-    })(req, res, next);
+        return res.redirect('/login');
+    }
+    req.user = user;
+    next();
+})(req, res, next);
 };
 
 // Chequear que el usuario no esté autenticado
 export const isNotAuthenticated = (req, res, next) => {
     if (!req.cookies.jwt) {
         return next();
-    } else {
-        res.redirect('/profile');  
     }
-};
+        if (req.headers['content-type'] === 'application/json') {
+          return res.status(400).json({ error: 'User already logged in' });
+      } else {
+          return res.redirect('/profile'); 
+      }
+  };
 
 export const authorization = (role) => {
     return async (req, res, next) => {

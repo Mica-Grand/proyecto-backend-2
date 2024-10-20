@@ -302,26 +302,63 @@ Si no se pasa nada por body, la quantity será 1 por default.
 - **Login:**
 - URL: `http://localhost:3000/api/sessions/login`
 - En el cuerpo de la solicitud, se debe enviar el objeto con los datos de login (email y password)
-- Si el login es exitoso, se devuelve un token de autenticación.
+ ```json
+{
+    "email": "mica@mail.com",
+    "password": "mica1234"
+}
+ ```
+- Si el login es exitoso, se devuelve:
+```json
+{
+    "message": "Login successful"
+}
+```
 
 - **Register:**
 - URL: `http://localhost:3000/api/sessions/register`
 - En el cuerpo de la solicitud, se debe enviar el objeto con los datos del usuario a crear
-- Si el registro es exitoso, se devuelve un token de autenticación.
+ ```json
+{
+   {
+    "first_name": "coder",
+    "last_name": "admin",
+    "email": "coderadmin@mail.com",
+    "age": 36,
+    "password": "coder1234",
+    "role": "admin"
+}
+}
+ ```
+- Si el registro es exitoso, se devuelve:
+
+```json
+{
+    "message": "Register successful"
+}
+```
+
 
 - **Logout:**
 - URL: `http://localhost:3000/api/sessions/logout`
+- Respuesta:
 
-
-
+ ```json
+{
+    "message": "Logout successful"
+}
+ ```
 
 
 
 ## Vistas
 
+LAS VISTAS NO ESTÁN REFACTORIZADAS NI MEJORADAS. FALTA TRABAJAR EN ESTE ASPECTO.
+
 ### CART
 
 - **Visualizar el cart del user que se encuentra logueado**
+- Sólo disponible para usuarios con rol user.
 - URL: `http://localhost:3000/cart`
 En esta vista se pueden ver los productos agregados y eliminarlos del carrito mediante un botón.
 Si no se encuentra un jwt o el mismo expiró (no se reconoce el user logueado), arroja un error 401 y renderiza una vista para que el usuario pueda registrarse o iniciar sesión.
@@ -331,7 +368,7 @@ Si no se encuentra un jwt o el mismo expiró (no se reconoce el user logueado), 
 - **Visualizar el perfil del user que se encuentra logueado**
 - URL: `http://localhost:3000/profile`
 En esta vista se puede ver el perfil del usuario logueado, incluyendo su información de registro (excepto datos sensibles).
-También cuenta con un botón funcional para cerrar sesión (all cerrar sesión redirige a la vista login)
+También cuenta con un botón funcional para cerrar sesión (al cerrar sesión redirige a la vista login)
 Si no se encuentra un jwt o el mismo expiró (no se reconoce el user logueado), arroja un error 401 y renderiza una vista para que el usuario pueda registrarse o iniciar sesión.
 
 ### LOGIN
@@ -368,14 +405,11 @@ En esta vista puede registrarse un nuevo usuario.
 - **Los productos pueden agregarse al cart del usuario autenticado.**
 
 
-### REALTIMEPRODUCTS (POR EL MOMENTO DESHABILITADO)
-- **Navegar a la lista de productos en tiempo real (catálogo):**
-- URL: `http://localhost:3000/realtimeproducts`
-- Muestra una lista de todos los productos disponibles en tiempo real.
-- Cuenta con un form para agregar productos al catálogo.
-En un futuro, si se conserva esta función, sólod ebería estar visible para usuarios con rol de admin.
-
-
+### MANAGE PRODUCTS
+- **Un formulario que permite agregar y eliminar productos del catálogo**
+- Sólo disponible para rol admin.
+- URL: `http://localhost:3000/manageproducts`
+- FALTA MOSTRAR EL LISTADO DE PRODUCTOS, PARA QUE SEA MAS FACIL ELIMINARLOS SIN TENER QUE CONOCER EL ID.
 
 
 ## Capturas de ejemplos de uso con Postman
