@@ -3,8 +3,7 @@
 import express from 'express';
 import productModel from '../models/product.model.js';
 import cartModel from '../models/cart.model.js';
-import { isAuthenticated, isNotAuthenticated, passportCall } from '../middlewares/auth.js';
-import jwt from 'jsonwebtoken';
+import { isAuthenticated, isNotAuthenticated, passportCall, authorization } from '../middlewares/auth.js';
 
 
 const router = express.Router();
@@ -70,7 +69,7 @@ router.get('/products', async (req, res) => {
 });
 
 
-router.get('/cart', passportCall('jwt'), async (req, res) => {
+router.get('/cart', passportCall('jwt'), authorization('user'), async (req, res) => {
     try {
         if (!req.user) {
             return res.status(401).render('error401', { message: 'To retrieve a cart or create one you need to log in first', title: "401 Unauthorized" });
@@ -143,33 +142,12 @@ router.get('/profile', passportCall('jwt', { session: false }), async (req, res)
     res.status(401).render('error401', { message: 'Unauthorized. Please log in.', title: "401 Unauthorized" });
   });
 
-router.get('/manageproducts', async (req, res) => {
-    try {
-
-        let products = await productModel.find();      
-        products = products.map(product => ({
-            _id: product._id,
-            title: product.title,
-            description: product.description,
-            price: product.price,
-            thumbnails: product.thumbnails,
-            code: product.code,
-            stock: product.stock,
-            category: product.category,
-            status: product.status
-        }));
-        console.log(products) 
-        res.render('manageProducts',  {
-            products: products,
-            title: 'Manage products',
-            scripts: ['manageProducts.js']
-    
-        });
-    } catch (error) {
-        console.error("We can't show the products right now", error);
-        res.status(500).send('Error while loading the products');
-    }
-}); 
+  router.get('/manageproducts', passportCall('jwt'), authorization('admin'), (req, res) => {
+    res.render('manageProducts', {
+      title: 'Manage Products',
+      scripts: ['manageProducts.js'],
+    });
+  });
 
 export default router;
 
