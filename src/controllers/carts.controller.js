@@ -20,7 +20,13 @@ export default class CartsController {
 
   async getCartById(req, res) {
     try {
-      const { cid } = req.params;
+      const cid = req.params.cid || req.user.cart; 
+      if (!cid) {
+        return res.status(400).json({
+          result: "error",
+          message: "Cart ID is required, either as a parameter or from the user.",
+        });
+      }
       const cart = await cartService.getCartById(cid);
       res.status(200).json({
         result: "success",

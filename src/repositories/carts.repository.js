@@ -61,7 +61,7 @@ export default class CartsRepository {
     await Promise.all([this.isValidCartId(cid), this.isValidProductId(pid)]);
     const cart = await this.getCartById(cid);
     const productInCart = cart.products.find(
-      (p) => p.productId.toString() === pid
+      (p) => p.productId._id.toString() === pid
     );
 
     if (!productInCart) throw new Error("Product not found in the cart");

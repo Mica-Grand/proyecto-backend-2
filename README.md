@@ -13,7 +13,13 @@ Este proyecto es una implementación backend para una plataforma de comercio ele
    
 
 - ### Características:
-  
+  - Autenticación y autorización de usuarios (JWT).
+  - Gestión de productos (listado, creación, eliminación y actualización).
+  - Funcionalidad de carrito de compras (crear, obtener, eliminar, actualizar).
+  - Procesar pedidos: crear ticket de compra y enviar por correo electrónico al cliente.
+  - Manejo de inventario: restar stock de la database cuando se realiza una venta.
+
+
 
 - ### Tecnologías utilizadas:
   - Node.js
@@ -28,25 +34,288 @@ Este proyecto es una implementación backend para una plataforma de comercio ele
   - Passport-jwt
   - Bcrypt.
   - Jsonwebtoken.
-  - cookie-parser
-  - dotenv
-  -uuid
-  - 
+  - Cookie-parser
+  - Dotenv
+  - Uuid
+  - Nodemailer
 
 
 ## Instalación
 
 1. Clona este repositorio.
-2. Instala las dependencias con `npm install`.
+2. Navega al directorio del proyecto.
+3. Instala las dependencias con `npm install`.
+4. Crea un archivo `.env` en el directorio raíz con las variables de entorno (ver `.env.example`).
 
 ## Uso
 
+El servidor se iniciará en el puerto especificado en tu archivo .env o caso contrario en el 8080.
 Para ejecutar la aplicación:
 
 ```bash
 npm start
 
 ```
+
+
+## Endpoints de la API 
+
+- `/api/products` - Operaciones relacionadas con productos
+- `/api/carts` - Operaciones del carrito de compras
+- `/api/sessions` - Autenticación de usuarios y gestión de sesiones
+- `/api/users` - Gestión de usuarios
+
+
+### PRODUCTS
+
+**GET:**
+
+- **Obtener todos los productos:**
+  - URL: `http://localhost:3000/api/products`
+  - No requiere autenticación.
+- **Parámetros de consulta opcionales: limit, page, sort, category, status**
+    -Page (si no se proporciona un valor, se otorga la page 1).
+     URL: `http://localhost:3000/api/products?page=2`
+    - Limit (si no se proporciona, por default es 10):
+     URL:`http://localhost:3000/api/products?limit=4`
+    - Sort. Opciones: asc y desc
+     URL `http://localhost:3000/api/products?sort=asc`
+    - Filter category, debe recibir nombre de categoría, por ejemplo, haircare.
+    URL:`http://localhost:3000/api/products?category=haircare`
+    - Filter status, recibe true o false que se convierte a boolean y filtra de acuerdo a la propiedad "status" del producto.
+    URL:`http://localhost:3000/api/products?status=false`
+    - Múltiples params:
+    URL: `http://localhost:3000/api/products?limit=5&category=makeup&status=true&sort=asc&page=2`
+
+- **Obtener un producto por su ID:**
+- No requiere autenticación
+  - URL: `http://localhost:3000/api/products/:pid`
+  - Ejemplo: `http://localhost:3000/api/products/66affad715462968a221eddf`
+
+**POST:**
+
+- **Crear un nuevo producto:**
+  - Requiere autenticación con rol de admin
+  - URL: `http://localhost:3000/api/products`
+  - Ejemplo de Body (JSON):
+    
+```json
+{
+    "title": "Hydrating Moisturizer",
+    "description": "A deeply nourishing moisturizer with hyaluronic acid for intense hydration.",
+    "price": 4500,
+    "thumbnails": [
+        "https://www.sephora.com/productimages/sku/s2742369-main-zoom.jpg?pb=clean-planet-aware&imwidth=250"
+    ],
+    "code": "1122334",
+    "stock": 15,
+    "category": "skincare",
+    "status": true
+}
+
+```
+
+**PUT:**
+
+- **Actualizar un producto por su ID:**
+  - Requiere autenticación con rol de admin
+  - URL: `http://localhost:3000/api/products/:pid`
+  - Body (JSON) con campos permitidos: `stock`, `description`, `price`, `category`, `thumbnails`,  `title`, `code`, `status`.
+  - Ejemplo: `http://localhost:3000/api/products/66affad715462968a221eddf`
+    ```json
+    {
+  
+      "description": "Está descripción ha sido actualizada"
+    }
+    ```
+
+**DELETE:**
+
+- **Eliminar un producto por su ID:**
+  - Requiere autenticación con rol de admin
+  - URL: `http://localhost:3000/api/products/:pid`
+  - Ejemplo: `http://localhost:3000/api/products/66affad715462968a221eddf`
+
+
+### CARTS
+
+
+**GET:**
+
+- **Obtener un carrito por su ID:**
+  - Requiere autenticación con rol de user.
+  - URL: `http://localhost:3000/api/carts/:cid`
+  - Ejemplo: `http://localhost:3000/api/carts/66e8c65e399279f48f0bd982`
+  - Lista todos los productos contenidos en el carrito especificado y realiza populate para traer las propiedades de cada producto.
+
+  **Obtener el cart del user autenticado**
+  - Requiere autenticación con rol de user.
+  - URL: `http://localhost:3000/api/carts/`
+  -Devuelve el carrito asociado al cartId del usuario autenticado, extraído del token JWT.
+
+**POST:**
+
+- **Crear un nuevo carrito vacío:**
+  - Requiere autenticación con rol de user.
+  - URL: `http://localhost:3000/api/carts`
+  - Crea un carrito nuevo con una estructura inicial vacía. Este cart no estaría asociado a ningún user, por lo que este endpoint ya no tendría sentido, pero se deja para pruebas. El result es:
+  ```json
+  {
+    "result": "success",
+    "payload": {
+        "products": [],
+        "_id": "66b91cce032e0581cd8b53e9",
+        "__v": 0
+    }
+    }
+    ```
+
+**POST (Agregar producto al carrito):**
+
+- **Agregar un producto al carrito por IDs:**
+  - Requiere autenticación con rol de user.
+  - URL: `http://localhost:3000/api/carts/:cid/products/:pid`
+  - Ejemplo: `http://localhost:3000/api/carts/66e8c65e399279f48f0bd982/products/66b415a9b0607ca7f1a4e9db`
+  - La quantity se puede pasar por body:
+  ```json
+  {
+    "quantity": "3"
+    }
+    ```
+Si no se pasa nada por body, la quantity será 1 por default.
+
+- **Completar compra:**
+  - Requiere autenticación con rol de user.
+  -Completa la compra del carrito.
+  - URL: `http://localhost:3000/api/carts/:cid/purchase`
+  - Ejemplo: `http://localhost:3000/api/carts/66e8c65e399279f48f0bd982/purchase`
+   Quita del stock de la database la cantidad comprada. En la respuesta devuelve los productos que no pudieron comprarse por falta de stock y los deja en el carrito.
+    ```json
+  {
+    "result": "success",
+    "message": "Purchase completed",
+    "productsNotPurchased": [
+        {
+            "productId": {
+                "_id": "66b7f065149c54e3aee92f42",
+                "title": "Eyelash Curler",
+                "description": "Rizador de pestañas ergonómico y fácil de usar.",
+                "price": 1800,
+                "thumbnails": [
+                    "https://www.sephora.com/productimages/sku/s1201474-main-zoom.jpg?pb=2020-03-allure-best-2018&imwidth=250"
+                ],
+                "code": "7890123",
+                "stock": 0,
+                "category": "tools",
+                "status": false,
+                "__v": 0
+            },
+            "quantity": 1,
+            "_id": "67156b6816034ea1dcd3f0dc"
+        }
+    ]
+    }
+    ```
+
+**PUT:**
+
+- **actualizar la cantidad de un producto determinado:**
+  - Requiere autenticación con rol de user.
+  - URL: `http://localhost:3000/carts/:cid/products/:pid`
+  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85/products/66b415c5b0607ca7f1a4e9dd`
+  - Actualiza la cantidad de un producto determinado que ya se encuentra en el carrito.
+  La quantity se debe pasar por BODY:
+    ```json
+  {
+    "quantity": 2
+    }
+    ```
+  
+- **actualizar el carrito con un arreglo de productos:**
+  - Requiere autenticación con rol de user.
+  - URL: `http://localhost:3000/api/carts/:cid`
+  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85`
+  - Actualiza el carrito con un arreglo de productos.
+  El array de products se envía por body. La solicitud debe tener este formato:
+  
+  ```json
+   {
+  "products": [
+    { "productId": "66b415d4b0607ca7f1a4e9df", "quantity": 2 },
+    { "productId": "66b415e8b0607ca7f1a4e9e1", "quantity": 1 }
+  ]
+  }
+
+    ```
+
+**DELETE:**
+
+- **Elimina producto seleccionado del carrito:**
+  - Requiere autenticación con rol de user.
+  - URL: `http://localhost:3000/api/carts/:cid/products/:pid`
+  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85/products/66b415c5b0607ca7f1a4e9dd`
+  - Elimina del cart pasado por param el producto pasado por param.
+
+- **Vacía el cart del id seleccionado:**
+  - Requiere autenticación con rol de user.
+  - URL: `http://localhost:3000/api/carts/:cid`
+  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85`
+  - Vacía el cart especificado con id por params, en este caso, 66affd4bc723a31ad3519e85
+
+
+### USERS
+
+**GET:**
+
+- **Obtener todos los usuarios:**
+- URL: `http://localhost:3000/api/users`
+
+- **Obtener un usuario por id:**
+- URL: `http://localhost:3000/api/users/:uid`
+- Ejemplo: `http://localhost:3000/api/users/66e8c65e399279f48f0bd984`
+
+
+**PUT:**
+- **Actualizar un usuario por id:**
+- URL: `http://localhost:3000/api/users/:uid`
+- Ejemplo: `http://localhost:3000/api/users/66e8c65e399279f48f0bd984`
+- En el cuerpo de la solicitud, se debe enviar el objeto con los datos a actualizar.
+- Ejemplo:
+
+  ```json
+   {
+   "age": 37
+  }
+
+    ```
+
+**DELETE:**
+- **Eliminar un usuario por id:**
+- URL: `http://localhost:3000/api/users/:uid`
+- Ejemplo: `http://localhost:3000/api/users/66ea22763da68cdc96e2229a`
+
+
+### SESSIONS
+
+**POST:**
+
+- **Login:**
+- URL: `http://localhost:3000/api/sessions/login`
+- En el cuerpo de la solicitud, se debe enviar el objeto con los datos de login (email y password)
+- Si el login es exitoso, se devuelve un token de autenticación.
+
+- **Register:**
+- URL: `http://localhost:3000/api/sessions/register`
+- En el cuerpo de la solicitud, se debe enviar el objeto con los datos del usuario a crear
+- Si el registro es exitoso, se devuelve un token de autenticación.
+
+- **Logout:**
+- URL: `http://localhost:3000/api/sessions/logout`
+
+
+
+
+
 
 ## Vistas
 
@@ -105,206 +374,6 @@ En esta vista puede registrarse un nuevo usuario.
 - Muestra una lista de todos los productos disponibles en tiempo real.
 - Cuenta con un form para agregar productos al catálogo.
 En un futuro, si se conserva esta función, sólod ebería estar visible para usuarios con rol de admin.
-
-## Endpoints API 
-
-### USERS
-
-**GET:**
-
-- **Obtener todos los usuarios:**
-- URL: `http://localhost:3000/api/users`
-
-- **Obtener un usuario por id:**
-- URL: `http://localhost:3000/api/users/:uid`
-- Reemplaza `:uid` con el id del usuario que se quiere obtener.
-
-**PUT:**
-- **Actualizar un usuario por id:**
-- URL: `http://localhost:3000/api/users/:uid`
-- Reemplaza `:uid` con el id del usuario que se quiere actualizar.
-- En el cuerpo de la solicitud, se debe enviar el objeto con los datos actualizados.
-
-**DELETE:**
-- **Eliminar un usuario por id:**
-- URL: `http://localhost:3000/api/users/:uid`
-- Reemplaza `:uid` con el id del usuario que se quiere eliminar.
-
-### SESSIONS
-
-**POST:**
-
-- **Login:**
-- URL: `http://localhost:3000/api/sessions/login`
-- En el cuerpo de la solicitud, se debe enviar el objeto con los datos de login (email y password)
-- Si el login es exitoso, se devuelve un token de autenticación.
-
-- **Register:**
-- URL: `http://localhost:3000/api/sessions/register`
-- En el cuerpo de la solicitud, se debe enviar el objeto con los datos del usuario a crear
-- Si el registro es exitoso, se devuelve un token de autenticación.
-
-- **Logout:**
-- URL: `http://localhost:3000/api/sessions/logout`
-
-
-### PRODUCTS
-
-**GET:**
-
-- **Obtener todos los productos:**
-  - URL: `http://localhost:3000/api/products`
-
-- **Filtros opcionales, a solicitar mediante query:**
-    -Page (si no se proporciona un valor, se otorga la page 1).
-     URL: `http://localhost:3000/api/products?page=2`
-    - Limit (si no se proporciona, por default es 10):
-     URL:`http://localhost:3000/api/products?limit=4`
-    - Sort. Opciones: asc y desc
-     URL `http://localhost:3000/api/products?sort=asc`
-    - Filter category, debe recibir nombre de categoría, por ejemplo, haircare.
-    URL:`http://localhost:3000/api/products?category=haircare`
-    - Filter status, recibe true o false que se convierte a boolean y filtra de acuerdo a la propiedad "status" del producto.
-    URL:`http://localhost:3000/api/products?status=false`
-    - Múltiples params:
-    URL: `http://localhost:3000/api/products?sort=asc&status=true&page=2&limit=4`
-     URL: `http://localhost:3000/api/products?limit=5&category=makeup&status=true&sort=asc&page=2`
-
-- **Obtener un producto por su ID:**
-  - URL: `http://localhost:3000/api/products/:pid`
-  - Ejemplo: `http://localhost:3000/api/products/66b41580fddd12e794da120b`
-
-**POST:**
-
-- **Crear un nuevo producto:**
-  - URL: `http://localhost:3000/api/products`
-  - Ejemplo de Body (JSON):
-    
-```json
-{
-    "title": "Oil Control Serum",
-    "description": " A high-strength vitamin-and-mineral blemish formula with pure niacinamide.",
-    "price": 3000,
-    "thumbnails": [
-        "https://www.sephora.com/productimages/sku/s2031391-main-zoom.jpg?imwidth=166"
-    ],
-    "code": "9988776",
-    "stock": 20,
-    "category": "skincare",
-    "status": true
-
-}
-```
-
-**PUT:**
-
-- **Actualizar un producto por su ID:**
-  - URL: `http://localhost:3000/api/products/:pid`
-  - Body (JSON) con campos permitidos: `stock`, `description`, `price`, `category`, `thumbnails`,  `title`, `code`, `status`.
-  - Ejemplo: `http://localhost:3000/api/products/66affabf15462968a221eddd`
-    ```json
-    {
-  
-      "description": "Está descripción ha sido actualizada"
-    }
-    ```
-
-**DELETE:**
-
-- **Eliminar un producto por su ID:**
-  - URL: `http://localhost:3000/api/products/:pid`
-  - Ejemplo: `http://localhost:3000/api/products/66affabf15462968a221eddd`
-
-### CARTS
-
-Atención: Aún ha sido actualizar para recuperar el cartId del usuario logueado, sigue estando configurado para tomarlo de url params.
-Sin embargo, en la vista de cart sí puede accederse al cart asociado al user que se encuentra logueado, y los botones de agregar y eliminar son funcionales para agregar y eliminar de dicho carrito.
-
-**GET:**
-
-- **Obtener un carrito por su ID:**
-  - URL: `http://localhost:3000/api/carts/:cid`
-  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85`
-  - Lista todos los productos contenidos en el carrito especificado y realiza populate para traer las propiedades de cada producto.
-
-**POST:**
-
-- **Crear un nuevo carrito vacío:**
-  - URL: `http://localhost:3000/api/carts`
-  - Crea un carrito nuevo con una estructura inicial vacía. El result es:
-  ```json
-  {
-    "result": "success",
-    "payload": {
-        "products": [],
-        "_id": "66b91cce032e0581cd8b53e9",
-        "__v": 0
-    }
-    }
-    ```
-
-**POST (Agregar producto al carrito):**
-
-- **Agregar un producto al carrito por IDs:**
-  - URL: `http://localhost:3000/api/carts/:cid/products/:pid`
-  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85/products/66b415a9b0607ca7f1a4e9db`
-  - La quantity se puede pasar por body:
-  ```json
-  {
-    "quantity": "3"
-    }
-    ```
-Si no se pasa nada por body, la quantity será 1 por default.
-
-**GET:**
-
-- **Obtener un carrito por su ID:**
-  - URL: `http://localhost:3000/api/carts/:cid`
-  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85`
-  - Lista todos los productos contenidos en el carrito especificado y realiza populate para traer las propiedades de cada producto.
-
-**PUT:**
-
-- **actualizar la cantidad de un producto determinado:**
-  - URL: `http://localhost:3000/carts/:cid/products/:pid`
-  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85/products/66affad715462968a221eddf`
-  - Actualiza la cantidad de un producto determinado que ya se encuentra en el carrito.
-  La quantity se debe pasar por BODY:
-    ```json
-  {
-    "quantity": "6"
-    }
-    ```
-  
-- **actualizar el carrito con un arreglo de productos:**
-  - URL: `http://localhost:3000/api/carts/:cid`
-  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85`
-  - Actualiza el carrito con un arreglo de productos.
-  El array de products se envía por body. La solicitud debe tener este formato:
-  
-  ```json
-   {
-  "products": [
-    { "productId": "66b415d4b0607ca7f1a4e9df", "quantity": 2 },
-    { "productId": "66b415e8b0607ca7f1a4e9e1", "quantity": 1 }
-  ]
-  }
-
-    ```
-
-**DELETE:**
-
-- **Elimina producto seleccionado del carrito:**
-  - URL: `http://localhost:3000/api/carts/:cid/products/:pid`
-  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85/products/66b415a9b0607ca7f1a4e9db`
-  - Elimina del cart pasado por param el producto pasado por param.
-
-- **Vacía el cart del id seleccionado:**
-  - URL: `http://localhost:3000/api/carts/:cid`
-  - Ejemplo: `http://localhost:3000/api/carts/66affd4bc723a31ad3519e85`
-  - Vacía el cart especificado con id por params, en este caso, 66affd4bc723a31ad3519e85
-
-
 
 
 
