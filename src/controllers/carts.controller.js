@@ -1,4 +1,4 @@
-import { cartService, ticketService } from "../repositories/index.js";
+import { cartService } from "../repositories/index.js";
 
 export default class CartsController {
   async createCart(req, res) {
@@ -155,6 +155,14 @@ export default class CartsController {
       const { email } = req.user; 
 
       const result = await cartService.completePurchase(cid, email);
+
+      if (!result.success) {
+        return res.status(400).json({
+          result: "error",
+          message: result.message,
+          productsNotPurchased: result.productsNotPurchased,
+        });
+      }
 
       res.status(200).json({
         result: "success",
