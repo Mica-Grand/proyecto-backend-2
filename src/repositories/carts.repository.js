@@ -124,23 +124,20 @@ export default class CartsRepository {
 
     for (const item of cart.products) {
       const product = await this.productDAO.getProductById(item.productId);
-
+  
       if (product.stock < item.quantity) {
-        productsNotPurchased.push({
+        productsNotPurchased.push(item);
+      } else {
+        product.stock -= item.quantity;
+        await this.productDAO.updateProduct(product._id, { stock: product.stock });
+  
+        purchasedProducts.push({
           productId: product._id,
-          requested: item.quantity,
-          available: product.stock,
+          title: product.title,
+          quantity: item.quantity,
+          price: product.price,
         });
-        continue;
       }
-      product.stock -= item.quantity;
-      await this.productDAO.updateProduct(product._id, { stock: product.stock,});
-
-      purchasedProducts.push({
-        title: product.title,
-        quantity: item.quantity,
-        price: product.price,
-      });
     }
 
     const totalAmount = purchasedProducts.reduce((acc, product) => {
@@ -165,12 +162,10 @@ export default class CartsRepository {
     await ticketService.createTicket(ticketData);
     await sendPurchaseEmail(ticketData, purchasedProducts, purchaserEmail);
 
-    const updatedProducts = cart.products.filter((item) =>
-      productsNotPurchased.some(
-        (pnp) => pnp.productId.toString() === item.productId.toString()
-      )
-    );
-    await this.updateCart(cid, updatedProducts);
+    cart.products = productsNotPurchased;
+    await this.cartDAO.saveCart(cart); 
+
+    console.log('Carrito después de guardar:', cart);
 
     return {
       success: true,

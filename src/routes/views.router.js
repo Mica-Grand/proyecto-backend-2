@@ -143,10 +143,15 @@ router.get('/profile', passportCall('jwt', { session: false }), async (req, res)
   });
 
   router.get('/manageproducts', passportCall('jwt'), authorization('admin'), (req, res) => {
+    try{
     res.render('manageProducts', {
       title: 'Manage Products',
       scripts: ['manageProducts.js'],
     });
+} catch (error) {
+    res.status(500).send({ error: 'Error al acceder al manejador de archivos' });
+  }
+
   });
 
 export default router;
