@@ -13,6 +13,7 @@ router.put('/:cid/products/:pid', passportCall('jwt'), authorization('user'),  c
 router.put('/:cid', passportCall('jwt'), authorization('user'), cartsController.updateCart); 
 router.delete('/:cid/products/:pid', passportCall('jwt'), authorization('user'),  cartsController.deleteProductFromCart); 
 router.delete('/:cid', passportCall('jwt'), authorization('user'), cartsController.emptyCart);  
+router.post('/:cid/purchase',passportCall('jwt'), authorization('user'), cartsController.completePurchase)
 
 export default router;
 

@@ -1,5 +1,7 @@
 import CartDAO from "../daos/cart.dao.js";
 import ProductDAO from "../daos/product.dao.js";
+import { ticketService } from "../repositories/index.js"
+import { v4 as uuidv4 } from 'uuid'; 
 
 export default class CartsRepository {
   constructor() {
@@ -72,10 +74,7 @@ async isValidProductId(pid) {
 
 
 async updateCart(cid, products) {
-  await Promise.all([
-    this.isValidCartId(cid),
-    this.isValidProductId(pid)
-]);
+    await this.isValidCartId(cid);
     const productIds = products.map(p => p.productId);
     const existingProducts = await this.productDAO.findProductsByIds(productIds);
 
@@ -110,4 +109,43 @@ async emptyCart(cid) {
     return cart;
 }
 
+async completePurchase(cid, purchaserEmail) {
+  const cart = await this.getCartById(cid);
+  if (!cart) throw new Error('Cart not found');
+
+  let totalAmount = 0;
+  const productsNotPurchased = [];
+
+  for (const item of cart.products) {
+    const product = await this.productDAO.getProductById(item.productId);
+
+    if (product.stock >= item.quantity) {
+      product.stock -= item.quantity;
+      await this.productDAO.updateProduct(product._id, { stock: product.stock });
+      totalAmount += product.price * item.quantity;
+    } else {
+      productsNotPurchased.push(item.productId);
+    }
+  }
+
+  if (totalAmount > 0) {
+    const ticketData = {
+      code: uuidv4(),
+      purchase_datetime: Date.now(),
+      amount: totalAmount,
+      purchaser: purchaserEmail,
+    };
+
+    await ticketService.createTicket(ticketData); 
+
+  const updatedProducts = cart.products.filter(item =>
+    productsNotPurchased.includes(item.productId)
+  );
+
+  await this.updateCart(cid, updatedProducts);
+
+  return { productsNotPurchased };
+}
+
+}
 }
